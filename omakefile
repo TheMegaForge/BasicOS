@@ -1,0 +1,20 @@
+ASM = nasm
+BOOT_FOLDER = boot
+BUILD = build
+BUILD_BOOT = build/boot
+BOOT_SRC = $(wildcard $(BOOT_FOLDER)/*.asm)
+BOOT_OUT = $(patsubst %.asm,%.o,$(BOOT_SRC))
+OS_BIN = $(BUILD)/OS.bin
+ASM_FLAGS = -f bin 
+all: mkboot _cat _trunc
+
+mkboot: $(BOOT_SRC)
+	nasm $(BOOT_FOLDER)/main.asm -o $(BUILD_BOOT)/main.o
+	nasm $(BOOT_FOLDER)/AR.asm -o $(BUILD_BOOT)/AR.o
+	nasm $(BOOT_FOLDER)/procMode.asm -I / -o $(BUILD_BOOT)/procMode.o
+_cat: 
+	cat $(BUILD_BOOT)/main.o $(BUILD_BOOT)/AR.o > $(BUILD)/bootl.bin
+	cat $(BUILD)/bootl.bin $(BUILD_BOOT)/procMode.o >$(OS_BIN)
+_trunc:
+	truncate -s 1440k $(OS_BIN)
+	cp $(OS_BIN) $(BUILD)/_OS.img

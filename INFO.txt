@@ -1,0 +1,2 @@
+THE FILE 'dsk.img' is not being pushed,because its the main simulated hard drive!
+but 'dsk.img' will containe all the code from stage 2 and above!

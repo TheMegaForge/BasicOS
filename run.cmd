@@ -1,0 +1,1 @@
+qemu-system-i386.exe -fda build/_OS.img -m 256M -drive id=disk,file=dsk.img
