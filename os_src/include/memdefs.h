@@ -35,6 +35,7 @@
     0x00100000	0x00EFFFFF
     0x01000000  ?????????? (32 BIT RAM)
 */
+#define MEM_MAP_SIZE_LOC (void*)0x7B00
 #define STAGE_1_LOCATION (void*)0x00000500 // ->
 #define MAX_STAGE_1_POS (void*)0x00007BE0
 #define POSSIBLE_STAGE_1_SIZE 0x76E0 //30432

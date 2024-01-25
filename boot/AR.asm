@@ -7,6 +7,7 @@ start:
     mov si,idSpec
     call ax
     call getMemoryInfo
+    mov [0x7B00],ax
     call hasPCI
     mov esp,ebp
     pop ebp
@@ -40,7 +41,6 @@ getMemoryInfo:
     push edx
     push ecx
     push ebx
-    push eax
     push 0  ;stack init
     xor edx,edx
     xor ecx,ecx
@@ -59,13 +59,11 @@ getMemoryInfo:
         .Expand:
             mov [di+20],dword 0xFFFFFFFF
         .ExpandL:
-            inc word [esp]
+            inc word [esp];increment the value of 'list'
             add di,24
         jmp .Mloop
     .MEnd:
     pop ax
-    pop ax  ;stack clean
-    pop eax
     pop ebx
     pop ecx
     pop edx
