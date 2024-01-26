@@ -10,7 +10,7 @@ void assignPCIDeviceHeader(_PCIDevice* device,uint32_t ClassProgIF){
     uint8_t class = extractByteFromWord(Class,true);
     uint8_t Subclass = extractByteFromWord(Class,false);
     device->class = pciClasses[class];
-    device->class.desc->subClassID = Subclass;
+    device->class.desc.subClassID = Subclass;
 }
 
 typedef struct {
@@ -59,11 +59,6 @@ uint8_t readPCIDeviceFunctions(PCIIterator* iterator){
             device->command = (statusCommand & 0x0000FFFF);
             device->status  = (statusCommand & 0xFFFF0000) >> 16;
             assignPCIDeviceHeader(device,ClassProgIF);
-            volatile int tmp = 0;
-            volatile register struct _PCIClass CLS = device->class;
-            tmp++;
-            volatile register uint8_t subClass     = device->class.desc->subClassID;
-            tmp++;
             iterator->current++;
             devices++;
         }else{
@@ -94,11 +89,6 @@ bool readPCIDevice(uint8_t* detectedDevices,PCIIterator* iterator,_PCIDevice** O
            *detectedDevices = readPCIDeviceFunctions(iterator);
         }
         assignPCIDeviceHeader(device,ClassProgIF);
-        volatile int tmp = 0;
-        volatile register struct _PCIClass CLS = device->class;
-        tmp++;
-        volatile register uint8_t subClass     = device->class.desc->subClassID;
-        tmp++;
         iterator->current++;
         *Output = device;
         return true;
@@ -122,9 +112,9 @@ uint8_t PCIScanSlotLine(PCIIterator* iterator){
     return deviceCount;
 }
 void readPCIBus(PCIBus* pci){
-    pci->PCIDevices = PCI_BUSSES_BEGIN;
+    pci->PCIDevices = (_PCIDevice*)PCI_BUSSES_BEGIN;
     PCIIterator iterator = {};
-    iterator.beg = PCI_BUSSES_BEGIN;
+    iterator.beg = (_PCIDevice*)PCI_BUSSES_BEGIN;
     iterator.bus = 0;
     iterator.slot = 0;
     iterator.current = 0;
@@ -134,6 +124,24 @@ void readPCIBus(PCIBus* pci){
     for(int i=0;i<256;i++){
         iterator.bus = i;
         pci->devices+=PCIScanSlotLine(&iterator);
+    }
+    PCIFineInformation* info = &pci->information;
+    for(int i=0;i<pci->devices;i++){
+        switch(pci->PCIDevices[i].class.ClassCode){
+            case PC3_MASS_STORAGE_CONTROLLER:{
+                info->hasMassStorage = true;
+                info->numberOfMassStorages++;
+                break;
+            }
+            case PC3_NETWORK_CONTROLLER:{
+                info->hasNetworkController = true;
+                break;
+            }
+            case PC3_DISPLAY_CONTROLLER:{
+                info->hasDisplayController = true;
+                info->NumberOfDisplayControllers++;
+            }
+        }
     }
     return;
 }
