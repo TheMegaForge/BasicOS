@@ -1,6 +1,22 @@
 #include "../include/stdio.h"
 #include "../include/memdefs.h"
 #include "../include/string.h"
+#include <stdbool.h>
+#include "../include/i686/math.h"
+
+extern __attribute__((cdecl)) const void* getAddressVarArg(void* bsp,uint8_t argPos);
+typedef enum{
+    PS_NORMAL    = 0,
+    PS_LONG      = 1,
+    PS_LONG_LONG = 2,
+    PS_HALF      = 3,
+    PS_HALF_HALF = 4,
+    PS_UNSIGNED  = 5,
+    PS_DIGIT     = 0xF0
+}PrintState;
+char* decimalNumbers = "0123456789";
+char* hexNumbers     = "0123456789ABCDEF";
+
 __cdecl char* putChar(char* memory,char c,uint8_t cc){
     *memory = c;
     *(memory+1) = cc;
@@ -63,34 +79,37 @@ __cdecl void setScreenColor(enum _ColorCode cc){
         data++;
     }
 }
-/*__cdecl void* copyDescriptorOutput(void* storeAddress,struct DescriptorOutput* new,struct DescriptorOutput* old){
+char numberToDecChar(uint32_t* num,uint32_t* rem){
+    *rem = *num % 10;
+    char* buffer = (char*)0;
+    * num = *num / 10;
+    return decimalNumbers[*rem];
+}
+uint8_t PutNumber(char* buffer,uint32_t num,bool hex){
+    uint8_t written;
+    do{
+        uint32_t rem = 0;
+        *buffer = numberToDecChar(&num,&rem);
+        buffer--;
+        written++;
+    }while(num > 0);
+    return written;
+}
+#define PRINTF_STATE_NORMAL         0
+#define PRINTF_STATE_LENGTH         1
+#define PRINTF_STATE_LENGTH_SHORT   2
+#define PRINTF_STATE_LENGTH_LONG    3
+#define PRINTF_STATE_SPEC           4
+
+#define PRINTF_LENGTH_DEFAULT       0
+#define PRINTF_LENGTH_SHORT_SHORT   1
+#define PRINTF_LENGTH_SHORT         2
+#define PRINTF_LENGTH_LONG          3
+#define PRINTF_LENGTH_LONG_LONG     4
+int* printf_number(int* argp, int length, bool sign, int radix);
+
+void __attribute__((cdecl)) printf(const char* fmt, ...)
+{
     
-}*/
-/*__cdecl struct DescriptorOutput* putDescriptorMessage(int line,struct TextDescriptor* descriptor){
-    char* text = descriptor->text;
-    char* addr = lineToTextAddress(line);
-    struct DescriptorOutput* output = (struct DescriptorOutput*)TEXT_DESC_OUTPUT;
-    output->count       = descriptor->descSize;
-    output->colors      = TEXT_DESC_OUTPUT+sizeof(struct DescriptorOutput);
-    output->desc        = output->colors+(sizeof(uint8_t)*descriptor->descSize);
-    output->textPtrs    = output->desc+(sizeof(uint16_t)*descriptor->descSize);
-
-    memcpy(output->colors,descriptor->descriptorColors,descriptor->descSize);
-    memcpy(output->desc,descriptor->desc,sizeof(uint16_t)*descriptor->descSize);
-
-    for(uint16_t i = 0;i<descriptor->descSize;i++){
-        uint16_t CDL = descriptor->desc[i];
-        uint8_t C_cc = descriptor->descriptorColors[i];
-        while(CDL != 0){
-            if(*text == ' '){
-                addr = putChar(addr,' ',descriptor->whitespaceColor);
-                output->whitespaces++;
-                text++;
-            }else{
-                addr = putChar(addr,*text,C_cc);
-                text++;
-            }
-        }
-    }
-    return output;
-}*/
+}
+//TODO : LATER!

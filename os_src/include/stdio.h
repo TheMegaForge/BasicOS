@@ -1,5 +1,6 @@
 #pragma once
-#include "stdint.h"
+#include <stdint.h>
+#include <stdbool.h>
 #include "stddef.h"
 #define CHARS_PER_LINE 80
 #define LINES_PER_SCREEN 25
@@ -28,13 +29,25 @@ __attribute__((packed))  struct TextDescriptor{
     uint8_t* descriptorColors;
     uint8_t whitespaceColor;
 };
-__cdecl void* copyDescriptorOutput(void* storeAddress,struct DescriptorOutput* new,struct DescriptorOutput* old); //unused
+
+extern __attribute__((cdecl)) uint8_t getUByteVarArg(void* bsp,uint8_t argPos);
+extern __attribute__((cdecl)) uint16_t getUShortVarArg(void* bsp,uint8_t argPos);
+extern __attribute__((cdecl)) uint32_t getUIntVarArg(void* bsp,uint8_t argPos);
+
+extern __attribute__((cdecl)) int8_t getByteVarArg(void* bsp,uint8_t argPos);
+extern __attribute__((cdecl)) int16_t getShortVarArg(void* bsp,uint8_t argPos);
+extern __attribute__((cdecl)) int32_t getIntVarArg(void* bsp,uint8_t argPos);
+
+
+
+char numberToDecChar(uint32_t* num,uint32_t* rem);
+uint8_t PutNumber(char* buffer,uint32_t num,bool hex);
 __cdecl char* putChar(char* memory,char c,uint8_t cc);
 __cdecl uint8_t puts(char** sl,char* str,enum _ColorCode cc);
+int printf(char* textBuffer,char* str,enum _ColorCode cc,...);
 __cdecl uint8_t newLine(char** sl,uint8_t writtenChars,enum _ColorCode cc);
 __cdecl uint8_t onLine(uint16_t line,char* data,enum _ColorCode cc);
 __cdecl uint8_t addressToLine(char* address);
 __cdecl char*   lineToTextAddress(int line);
 __cdecl void setScreenColor(enum _ColorCode cc);
 __cdecl void kpanic(const char* data);
-__cdecl struct DescriptorOutput* putDescriptorMessage(int line,struct TextDescriptor* descriptor);  //unused

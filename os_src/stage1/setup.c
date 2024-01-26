@@ -7,21 +7,14 @@
 #include "../include/PCI.h"
 #include "../include/HAL.h"
 #include "../include/i686/math.h"
+#include "../include/utils/binary.h"
+static char* _tb;
 void(*kernelAddr)(struct KernelTalk* kt) = STAGE_1_LOCATION;
 RawFunction __cdecl section(".setup")  void __setup(struct  NativeTalk* nt){
-    char* tl = nt->textAddress;
-    HAL_Initilize();
-    PCIBus bus = {};
-    readPCIBus(&bus);
-    newLine(&tl,puts(&tl,"SETUP!",CC_WHITE_BLUE),CC_WHITE_BLUE);
-    for(int i=0;i<bus.devices;i++){
-        if(bus.PCIDevices[i].class.ClassCode == PC3_DISPLAY_CONTROLLER){
-            newLine(&tl,puts(&tl,"DISPLAY CONTROLLER!",CC_WHITE_BLUE),CC_WHITE_BLUE);
-        }
-    }
-    //TODO : DO PIC
-    if(hasPCI2Mek()){
-        kpanic("Can not boot!(PC is too old!)");
-    }
+    _tb = nt->textAddress;
+    getUIntVarArg(&nt,1);
+    volatile register char f = *(char*)PRINTF_NUMBER_BEG;
+    printf(_tb,"Num Data: %u",CC_GREEN_BLUE,1000);
+
     return;
 }

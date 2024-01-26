@@ -4,19 +4,23 @@ INPUT
 (
     build/kmc/setup.o
     build/kmc/string.o
-    build/kmc/string_.o
     build/kmc/stdio.o
     build/kmc/simplealloc.o
-    build/kmc/io.o
-    build/kmc/math.o
     build/kmc/PCI.o
     build/kmc/PCIDef.o
     build/kmc/PCIStructs.o
-    build/kmc/IDT_.o
+    build/kmc/math.o
     build/kmc/IDT.o
     build/kmc/HAL.o
     build/kmc/int/PCI.o
     build/kmc/int/binary.o
+    build/kmc/int/stdio.o
+    build/kmc/ISR.o
+    build/kmc/i686/IDT.o
+    build/kmc/i686/io.o
+    build/kmc/i686/ISR.o
+    build/kmc/i686/math.o
+    build/kmc/i686/string.o
 )
 OUTPUT(build/OSp1.bin)
 STARTUP(build/boot/ksetjmp.o)

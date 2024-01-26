@@ -1,3 +1,4 @@
 #pragma once
 
-void HAL_Initilize();
+#include "../include/PCI.h"
+void HAL_Initilize(PCIBus* pciBus);

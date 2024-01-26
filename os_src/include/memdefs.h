@@ -35,6 +35,15 @@
     0x00100000	0x00EFFFFF
     0x01000000  ?????????? (32 BIT RAM)
 */
+/*
+    used memory:
+    0x00000500  0x00007BFF (KERNEL)
+    0x00008000  0x0000F000 (OS STACK)
+    0x0000FF00  0x0000FF12 (PRINTF NUMBERS);
+
+*/
+
+
 #define MEM_MAP_SIZE_LOC (void*)0x7B00
 #define STAGE_1_LOCATION (void*)0x00000500 // ->
 #define MAX_STAGE_1_POS (void*)0x00007BE0

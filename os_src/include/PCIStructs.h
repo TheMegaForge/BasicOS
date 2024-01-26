@@ -5,8 +5,8 @@
     //COMMENTS FROM WEBSITE https://wiki.osdev.org/PCI
     --------------------------------------------------
 */
-#include "stdint.h"
-#include "stdbool.h"
+#include <stdint.h>
+#include <stdbool.h>
 extern const uint8_t PCIClassSize;
 #define DECOMPRESSED 
 #define SPACED_COMPRESSED //when its larger than the compressed version and some bitfiels are getting used
@@ -131,7 +131,7 @@ __attribute__((packed)) struct PCIClassDescriptor{
 };
 __attribute__((packed)) struct _PCIClass{
     enum PCIClassCode ClassCode;
-    struct PCIClassDescriptor* desc;
+    struct PCIClassDescriptor desc;
     uint8_t progIfDescriptor;//upper 4 = type,lower 4 = index
 };
 extern struct _PCIClass pciClasses[];

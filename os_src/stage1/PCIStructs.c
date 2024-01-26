@@ -1,6 +1,6 @@
 #include "../include/PCIStructs.h"
 #define PC_PREP(spec,sc,subClassesD){.subClassID = sc,.subClasses = subClassesD}
-#define PC3_PREP(spec,cc,index){.ClassCode = cc,.desc = &ClassDescriptors[index]}
+#define PC3_INFO(spec,index)
 uint8_t PCIUnclassified[] = {
 
 };
@@ -76,7 +76,7 @@ uint8_t CoProcessor = 0xFF;
 uint8_t _0xFE = 0xFF;
 uint8_t UnassignedClassVender = 0xFF;
 struct PCIClassDescriptor ClassDescriptors[] = {
-    PC_PREP("UNCLASS",0,&PCIUnclassified[0]),
+    PC_PREP("UNCLASS",0,&PCIUnclassified[0]), //UNCLASS
     PC_PREP("MASS STORAGE",0,&PCIMassStorage[0]),
     PC_PREP("NETWORK CONTROLLER",0,&PCINetworkController[0]),
     PC_PREP("DISPLAY CONTROLLER",0,&PCIDisplayController[0]),
@@ -101,30 +101,51 @@ struct PCIClassDescriptor ClassDescriptors[] = {
     PC_PREP("0xFE (Reserved)",0,&_0xFE),
     PC_PREP("Unassigned Class (Vendor specific)",0,&UnassignedClassVender)
 };
-struct _PCIClass pciClasses[] = {
-    PC3_PREP("UNCLASSIFIED",PC3_UNCLASSIFIED,0),
-    PC3_PREP("MASS STORAGE",PC3_MASS_STORAGE_CONTROLLER,1),
-    PC3_PREP("NETWORK CONTROLLER",PC3_NETWORK_CONTROLLER,2),
-    PC3_PREP("DISPLAY CONTROLLER",PC3_DISPLAY_CONTROLLER,3),
-    PC3_PREP("MULTIMEDIA CONTROLLER",PC3_MULTIMEDIA_CONTROLLER,4),
-    PC3_PREP("MEMORY CONTROLLER",PC3_MEMORY_CONTROLLER,5),
-    PC3_PREP("BRIDGE",PC3_BRIDGE,6),
-    PC3_PREP("SIMPLE COMMUNICATION CONTROLLER",PC3_SIMPLE_COMMUNICATION_CONTROLLER,7),
-    PC3_PREP("BASE SYSTEM PERIPHAEL",PC3_BASE_SYSTEM_PERIPHALE,8),
-    PC3_PREP("INPUT DEVICE CONTROLLER",PC3_INPUT_DEVICE_CONTROLLER,9),
-    PC3_PREP("DOCKING STATION",PC3_DOCKING_STATION,0xA),
-    PC3_PREP("PROCESSOR",PC3_PROCESSOR,0xB),
-    PC3_PREP("SERIAL BUS CONTROLLER",PC3_SERIAL_BUS_CONTROLLER,0xC),
-    PC3_PREP("WIRELESS CONTROLLER",PC3_WIRELESS_CONTROLLER,0xD),
-    PC3_PREP("INTELLIGENT CONTROLLER",PC3_INTELLIGENT_CONTROLLER,0xE),
-    PC3_PREP("SATELLITE COMMUNICATION DEVICE",PC3_SATELLITE_COMMUNICATION_DEVICE,0xF),
-    PC3_PREP("ENCRYPTION CONTROLLER",PC3_ENCRYPTION_CONTROLLER,0x10),
-    PC3_PREP("SIGNAL PROCESSING UNIT",PC3_SIGNAL_PROCESSING_UNIT,0x11),
-    PC3_PREP("PROCESSING ACCELERATOR",PC3_PROCESSING_ACCELERATOR,0x12),
-    PC3_PREP("NON ESSENTIAL INSTRUMENT",PC3_NON_ESSENTIAL_INSTRUMENT,0x13),
-    PC3_PREP("0x3F(RESERVED)",PC3__0x3F_RESERVED,0x14),
-    PC3_PREP("CO PROCESSOR",PC3_CO_PROCESSOR,0x15),
-    PC3_PREP("0xFE(RESEVED)",PC3__0xFE_RESERVED,0x16),
-    PC3_PREP("UNASSIGNED",PC3_UNASSIGNED_CLASS_VENDOR_SPECIFIC,0x17),
+void initPCIClasses(){
+    for(uint8_t i = 0;i<0x14;i++){
+        struct _PCIClass* class = &pciClasses[i];
+        class->ClassCode        = (enum PCIClassCode)i;
+        class->desc             = ClassDescriptors[i];
+        class->progIfDescriptor = 0;
+    }
+    struct _PCIClass* class = &pciClasses[0x15];
+    class->ClassCode = PC3_CO_PROCESSOR;
+    class->desc      = ClassDescriptors[0x15];
+    class->progIfDescriptor = 0;
+    class++;
+    class->ClassCode = PC3__0xFE_RESERVED;
+    class->desc      = ClassDescriptors[0x16];
+    class->progIfDescriptor = 0;
+    class++;
+    class->ClassCode = PC3_UNASSIGNED_CLASS_VENDOR_SPECIFIC;
+    class->desc      = ClassDescriptors[0x17];
+    class->progIfDescriptor = 0;
+
+}
+struct _PCIClass pciClasses[0x17] = {
+    PC3_INFO("UNCLASSIEFIED",0)//UNCLASSIEFIED
+    PC3_INFO("MASS STORAGE",1)
+    PC3_INFO("NETWORK CONTROLLER",2)
+    PC3_INFO("DISPLAY CONTROLLER",3)
+    PC3_INFO("MULTIMEDIA CONTROLLER",4)
+    PC3_INFO("MEMORY CONTROLLER",5)
+    PC3_INFO("BRIDGE",6)
+    PC3_INFO("SIMPLE COMMUNICATION CONTROLLER",7)
+    PC3_INFO("BASE SYSTEM PERIPHAEL",8)
+    PC3_INFO("INPUT DEVICE CONTROLLER",9)
+    PC3_INFO("DOCKING STATION",10)
+    PC3_INFO("PROCESSOR",11)
+    PC3_INFO("SERIAL BUS CONTROLLER",12)
+    PC3_INFO("WIRELESS CONTROLLER",13)
+    PC3_INFO("INTELLIGENT CONTROLLER",14)
+    PC3_INFO("SATELLITE COMMUNICATION DEVICE",15)
+    PC3_INFO("ENCRYPTION CONTROLLER",16)
+    PC3_INFO("SIGNAL PROCESSING UNIT",17)
+    PC3_INFO("PROCESSING ACCELERATOR",18)
+    PC3_INFO("NON ESSENTIAL INSTRUMENT",19)
+    PC3_INFO("0x3F(RESERVED)",20)
+    PC3_INFO("CO PROCESSOR",21)
+    PC3_INFO("0xFE(RESEVED)",22)
+    PC3_INFO("UNASSIGNED",23)
 };
 const uint8_t PCIClassSize = sizeof(struct _PCIClass);

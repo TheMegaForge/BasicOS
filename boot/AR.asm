@@ -63,6 +63,8 @@ getMemoryInfo:
             add di,24
         jmp .Mloop
     .MEnd:
+        pop cx
+    .MEndL:
     pop ax
     pop ebx
     pop ecx

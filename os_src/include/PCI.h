@@ -46,7 +46,14 @@ typedef struct {
 }__attribute__((packed)) _PCIDevice;
 
 typedef struct {
-//TODO : IMPLEMENT THIS!
+    uint8_t hasMassStorage;
+    uint8_t hasDisplayController;
+    uint8_t hasNetworkController;
+    uint8_t hasKeyboard;
+    uint8_t hasMouse;
+
+    uint8_t numberOfMassStorages;
+    uint8_t NumberOfDisplayControllers;
 }__attribute__((packed)) PCIFineInformation;
 typedef struct {
     int devices;

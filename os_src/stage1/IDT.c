@@ -20,4 +20,7 @@ void IDTDisableGate(int interrupt){
 }
 void IDTInitialize(){
     LoadIDT(&g_IDTDesc);
+    for(int i=0;i<255;i++){
+        IDTEnableGate(i);
+    }
 }
