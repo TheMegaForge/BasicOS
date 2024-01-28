@@ -1,9 +1,20 @@
 #pragma once
 #include "../stdint.h"
-typedef struct {
-    uint32_t ds;
-    uint32_t edi,esi,ebp,kernel_esp,ebx,edx,ecx,eax;
-    uint32_t interrupt,error;
-    uint32_t eip,cs,eflags,esp,ss;
-}__attribute__((packed)) Registers;
-
+typedef struct 
+{
+    // in the reverse order they are pushed:
+    uint32_t ds;                                            // data segment pushed by us
+    uint32_t edi;
+    uint32_t esi;
+    uint32_t ebp;
+    uint32_t useless;
+    uint32_t ebx;
+    uint32_t edx;
+    uint32_t ecx;
+    uint32_t eax;    // pusha
+    uint32_t interrupt, error;                              // we push interrupt, error is pushed automatically (or our dummy)
+    uint32_t eip, cs, eflags, esp, ss;                      // pushed automatically by CPU
+} __attribute__((packed)) Registers;
+typedef uint32_t(*InterruptHandler)(Registers* regs);
+void __attribute__((cdecl)) ISRInitialize();
+void addInterruptHandler(int interrupt,InterruptHandler handler);
