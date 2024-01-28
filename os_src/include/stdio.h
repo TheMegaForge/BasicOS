@@ -39,10 +39,7 @@ extern __attribute__((cdecl)) int16_t getShortVarArg(void* bsp,uint8_t argPos);
 extern __attribute__((cdecl)) int32_t getIntVarArg(void* bsp,uint8_t argPos);
 
 
-
-char numberToDecChar(uint32_t* num,uint32_t* rem);
-uint8_t PutNumber(char* buffer,uint32_t num,bool hex);
-__cdecl char* putChar(char* memory,char c,uint8_t cc);
+__cdecl char* putc(char* memory,char c,uint8_t cc);
 __cdecl uint8_t puts(char** sl,char* str,enum _ColorCode cc);
 int printf(char* textBuffer,char* str,enum _ColorCode cc,...);
 __cdecl uint8_t newLine(char** sl,uint8_t writtenChars,enum _ColorCode cc);
