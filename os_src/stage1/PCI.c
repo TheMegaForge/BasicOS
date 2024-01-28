@@ -6,11 +6,14 @@
 #include "../include/stdio.h"
 #include "../include/string.h"
 void assignPCIDeviceHeader(_PCIDevice* device,uint32_t ClassProgIF){
-    uint16_t Class = extractWordFromDWord(ClassProgIF,true);
+    uint16_t Class          = extractWordFromDWord(ClassProgIF,true);
+    uint16_t ProgIfRevision = extractWordFromDWord(ClassProgIF,false);
+    uint8_t ProgIF          = extractByteFromWord(ProgIfRevision,true);
     uint8_t class = extractByteFromWord(Class,true);
     uint8_t Subclass = extractByteFromWord(Class,false);
     device->class = pciClasses[class];
     device->class.desc.subClassID = Subclass;
+    device->class.progIfDescriptor = ProgIF;
 }
 
 typedef struct {
@@ -93,7 +96,7 @@ bool readPCIDevice(uint8_t* detectedDevices,PCIIterator* iterator,_PCIDevice** O
         *Output = device;
         return true;
     }else{
-        *Output = 0xFFFF0000;
+        *Output = (_PCIDevice*)0xFFFF0000;
         return false;
     }
 }
@@ -103,7 +106,7 @@ uint8_t PCIScanSlotLine(PCIIterator* iterator){
     for(int i=0;i<32;i++){
         iterator->slot = i;
         uint8_t detectedDevices = 0;
-        if(readPCIDevice(&detectedDevices,iterator,0xFF)){
+        if(readPCIDevice(&detectedDevices,iterator,(_PCIDevice**)0xFF)){
             deviceCount++;
             deviceCount+=detectedDevices;
         }
