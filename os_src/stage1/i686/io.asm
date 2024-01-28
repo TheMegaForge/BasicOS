@@ -81,3 +81,23 @@ ini_:
     pop ebp
     pop edx
     ret
+;extern __attribute__((cdecl)) void io_wait();
+global io_wait
+io_wait:
+    push edx
+    push eax
+    xor eax,eax
+    mov dx,0x80
+    out dx,al
+    pop eax
+    pop edx
+    ret
+global enableInterrupts
+enableInterrupts:
+    sti
+    ret
+    
+global disableInterrupts
+disableInterrupts:
+    cli
+    ret
