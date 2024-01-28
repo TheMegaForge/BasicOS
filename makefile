@@ -42,7 +42,10 @@ mksetup:
 	$(CC) $(CC_FLAGS) os_src/stage1/HAL.c -o build/kmc/HAL.o
 	$(CC) $(CC_FLAGS) os_src/stage1/ISR.c -o build/kmc/ISR.o
 	$(CC) $(CC_FLAGS) os_src/stage1/math.c -o build/kmc/math.o
-	$(LD) $(LD_FLAGS_S1)
+	$(CC) $(CC_FLAGS) os_src/stage1/isrs.c -o build/kmc/isrs.o
+	$(CC) $(CC_FLAGS) os_src/stage1/PIC.c -o build/kmc/PIC.o
+	$(CC) $(CC_FLAGS) os_src/stage1/IRQ.c -o build/kmc/IRQ.o
+	$(LD) $(LD_FLAGS_S1) -m elf_i386 --print-map > mapfile.txt
 _cat:
 	cat $(BUILD_BOOT)/main.o $(BUILD_BOOT)/AR.o > build/$(REAL_MODE_FILE)
 	cat build/$(REAL_MODE_FILE) $(BUILD_BOOT)/procMode.o > build/$(FPF)

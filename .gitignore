@@ -1,3 +1,4 @@
 dsk.img
 .vscode/
-**/build/
+**/build/**
+mapfile.txt

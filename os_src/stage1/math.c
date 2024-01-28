@@ -9,8 +9,3 @@ int getDigitsInNumber(int number){
 int abs(int num){
     return num < 0 ? -num : num;
 }
-
-
-int log10(int num){
-    
-}

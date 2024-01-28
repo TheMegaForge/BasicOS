@@ -37,6 +37,7 @@
 */
 /*
     used memory:
+    0x7BE0 (32 Bit temporary handler value)
     0x00000500  0x00007BFF (KERNEL)
     0x00008000  0x0000F000 (OS STACK)
     0x0000FF00  0x0000FF12 (PRINTF NUMBERS);

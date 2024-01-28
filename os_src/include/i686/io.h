@@ -6,3 +6,7 @@ __attribute__((cdecl)) void outi_(unsigned short int port,uint32_t data);
 __attribute__((cdecl)) uint8_t inb_(uint16_t port);
 __attribute__((cdecl)) uint16_t ins_(uint16_t port);
 __attribute__((cdecl)) uint32_t ini_(uint16_t port);
+
+extern void __attribute__((cdecl)) io_wait();
+extern void __attribute__((cdecl)) disableInterrupts();
+extern void __attribute__((cdecl)) enableInterrupts();

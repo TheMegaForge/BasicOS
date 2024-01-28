@@ -132,6 +132,6 @@ __attribute__((packed)) struct PCIClassDescriptor{
 __attribute__((packed)) struct _PCIClass{
     enum PCIClassCode ClassCode;
     struct PCIClassDescriptor desc;
-    uint8_t progIfDescriptor;//upper 4 = type,lower 4 = index
+    uint8_t progIfDescriptor;//
 };
 extern struct _PCIClass pciClasses[];

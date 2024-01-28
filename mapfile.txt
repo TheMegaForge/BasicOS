@@ -1,0 +1,514 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/boot/ksetjmp.o
+LOAD build/kmc/setup.o
+LOAD build/kmc/string.o
+LOAD build/kmc/stdio.o
+LOAD build/kmc/simplealloc.o
+LOAD build/kmc/PCI.o
+LOAD build/kmc/PCIDef.o
+LOAD build/kmc/PCIStructs.o
+LOAD build/kmc/math.o
+LOAD build/kmc/IDT.o
+LOAD build/kmc/HAL.o
+LOAD build/kmc/isrs.o
+LOAD build/kmc/int/PCI.o
+LOAD build/kmc/int/binary.o
+LOAD build/kmc/int/stdio.o
+LOAD build/kmc/ISR.o
+LOAD build/kmc/PIC.o
+LOAD build/kmc/IRQ.o
+LOAD build/kmc/i686/IDT.o
+LOAD build/kmc/i686/io.o
+LOAD build/kmc/i686/ISR.o
+LOAD build/kmc/i686/math.o
+LOAD build/kmc/i686/string.o
+                0x00000500                        . = 0x500
+
+.setup          0x00000500       0xb5
+                0x00000500                        __setup_start = .
+ *(.setup)
+ .setup         0x00000500       0xb5 build/kmc/setup.o
+                0x00000500                __setup
+
+.text           0x000005c0     0x35e2
+                0x000005c0                        __text_start = .
+ *(.text)
+ .text          0x000005c0       0x30 build/kmc/setup.o
+                0x000005c0                getTB
+                0x000005ca                timer
+ .text          0x000005f0       0x6a build/kmc/string.o
+                0x000005f0                strlen
+                0x00000620                memcpy
+ .text          0x0000065a      0x670 build/kmc/stdio.o
+                0x0000065a                putc
+                0x00000688                puts
+                0x000006d9                newLine
+                0x0000072c                onLine
+                0x0000078a                addressToLine
+                0x000007ab                lineToTextAddress
+                0x000007c8                kpanic
+                0x0000082a                setScreenColor
+                0x00000867                numberToDecChar
+                0x000008af                putUNum
+                0x00000948                putNum
+                0x00000a13                putHexNum
+                0x00000abb                parsePrint
+                0x00000c2a                printf
+ .text          0x00000cca       0x3e build/kmc/simplealloc.o
+                0x00000cca                allocate
+                0x00000cef                deallocate
+ .text          0x00000d08      0x5e6 build/kmc/PCI.o
+                0x00000d08                assignPCIDeviceHeader
+                0x00000db5                hasPCI2Mek
+                0x00000ddb                pciConfigReadDWord
+                0x00000e62                pciConfigReadWord
+                0x00000eb0                readPCIDeviceInfo
+                0x00000f63                readPCIDeviceFunctions
+                0x00001042                readPCIDevice
+                0x00001177                PCIScanSlotLine
+                0x000011dd                readPCIBus
+ .text          0x000012ee        0x0 build/kmc/PCIDef.o
+ .text          0x000012ee       0xd1 build/kmc/PCIStructs.o
+                0x000012ee                initPCIClasses
+ .text          0x000013bf       0x18 build/kmc/math.o
+                0x000013bf                getDigitsInNumber
+                0x000013c9                abs
+ .text          0x000013d7       0xb4 build/kmc/IDT.o
+                0x000013d7                IDTSetGate
+                0x00001434                IDTEnableGate
+                0x00001453                IDTDisableGate
+                0x00001472                IDTInitialize
+ .text          0x0000148b       0x2c build/kmc/HAL.o
+                0x0000148b                HAL_Initilize
+ .text          0x000014b7     0x1499 build/kmc/isrs.o
+                0x000014b7                ISRInitializeGates
+ .text          0x00002950       0x4f build/kmc/int/binary.o
+                0x00002950                extractWordFromDWord
+                0x00002977                extractByteFromWord
+ *fill*         0x0000299f        0x1 
+ .text          0x000029a0      0x106 build/kmc/int/stdio.o
+                0x000029f0                getUByteVarArg
+                0x00002a0a                getUShortVarArg
+                0x00002a24                getUIntVarArg
+                0x00002a3e                getByteVarArg
+                0x00002a58                getShortVarArg
+                0x00002a72                getIntVarArg
+                0x00002a8c                getAddressVarArg
+ .text          0x00002aa6      0x158 build/kmc/ISR.o
+                0x00002aa6                ISR_HANDLE
+                0x00002b8a                ISRInitialize
+                0x00002bbc                addInterruptHandler
+ .text          0x00002bfe      0x2b8 build/kmc/PIC.o
+                0x00002bfe                PICConfigure
+                0x00002cf0                PICMask
+                0x00002d43                PICDisable
+                0x00002d7d                PICSendEndOfInterrupt
+                0x00002dad                PICUnmask
+                0x00002e06                PICReadIRQRequestRegisters
+                0x00002e5e                PICReadInServiceRegister
+ .text          0x00002eb6      0x12a build/kmc/IRQ.o
+                0x00002eb6                IRQInitialize
+                0x00002efc                IRQ_COMMON
+                0x00002fcd                IRQRegisterHandler
+ .text          0x00002fe0        0xd build/kmc/i686/IDT.o
+                0x00002fe0                LoadIDT
+ *fill*         0x00002fed        0x3 
+ .text          0x00002ff0       0x6f build/kmc/i686/io.o
+                0x00002ff0                outb_
+                0x00003002                outs_
+                0x00003015                outi_
+                0x00003027                inb_
+                0x00003034                ins_
+                0x00003042                ini_
+                0x0000304f                io_wait
+                0x0000305b                enableInterrupts
+                0x0000305d                disableInterrupts
+ *fill*         0x0000305f        0x1 
+ .text          0x00003060      0xa76 build/kmc/i686/ISR.o
+                0x00003060                i686_ISR0
+                0x00003069                i686_ISR1
+                0x00003072                i686_ISR2
+                0x0000307b                i686_ISR3
+                0x00003084                i686_ISR4
+                0x0000308d                i686_ISR5
+                0x00003096                i686_ISR6
+                0x0000309f                i686_ISR7
+                0x000030a8                i686_ISR8
+                0x000030af                i686_ISR9
+                0x000030b8                i686_ISR10
+                0x000030bf                i686_ISR11
+                0x000030c6                i686_ISR12
+                0x000030cd                i686_ISR13
+                0x000030d4                i686_ISR14
+                0x000030db                i686_ISR15
+                0x000030e4                i686_ISR16
+                0x000030ed                i686_ISR17
+                0x000030f4                i686_ISR18
+                0x000030fd                i686_ISR19
+                0x00003106                i686_ISR20
+                0x0000310f                i686_ISR21
+                0x00003116                i686_ISR22
+                0x0000311f                i686_ISR23
+                0x00003128                i686_ISR24
+                0x00003131                i686_ISR25
+                0x0000313a                i686_ISR26
+                0x00003143                i686_ISR27
+                0x0000314c                i686_ISR28
+                0x00003155                i686_ISR29
+                0x0000315c                i686_ISR30
+                0x00003163                i686_ISR31
+                0x0000316c                i686_ISR32
+                0x00003175                i686_ISR33
+                0x0000317e                i686_ISR34
+                0x00003187                i686_ISR35
+                0x00003190                i686_ISR36
+                0x00003199                i686_ISR37
+                0x000031a2                i686_ISR38
+                0x000031ab                i686_ISR39
+                0x000031b4                i686_ISR40
+                0x000031bd                i686_ISR41
+                0x000031c6                i686_ISR42
+                0x000031cf                i686_ISR43
+                0x000031d8                i686_ISR44
+                0x000031e1                i686_ISR45
+                0x000031ea                i686_ISR46
+                0x000031f3                i686_ISR47
+                0x000031fc                i686_ISR48
+                0x00003205                i686_ISR49
+                0x0000320e                i686_ISR50
+                0x00003217                i686_ISR51
+                0x00003220                i686_ISR52
+                0x00003229                i686_ISR53
+                0x00003232                i686_ISR54
+                0x0000323b                i686_ISR55
+                0x00003244                i686_ISR56
+                0x0000324d                i686_ISR57
+                0x00003256                i686_ISR58
+                0x0000325f                i686_ISR59
+                0x00003268                i686_ISR60
+                0x00003271                i686_ISR61
+                0x0000327a                i686_ISR62
+                0x00003283                i686_ISR63
+                0x0000328c                i686_ISR64
+                0x00003295                i686_ISR65
+                0x0000329e                i686_ISR66
+                0x000032a7                i686_ISR67
+                0x000032b0                i686_ISR68
+                0x000032b9                i686_ISR69
+                0x000032c2                i686_ISR70
+                0x000032cb                i686_ISR71
+                0x000032d4                i686_ISR72
+                0x000032dd                i686_ISR73
+                0x000032e6                i686_ISR74
+                0x000032ef                i686_ISR75
+                0x000032f8                i686_ISR76
+                0x00003301                i686_ISR77
+                0x0000330a                i686_ISR78
+                0x00003313                i686_ISR79
+                0x0000331c                i686_ISR80
+                0x00003325                i686_ISR81
+                0x0000332e                i686_ISR82
+                0x00003337                i686_ISR83
+                0x00003340                i686_ISR84
+                0x00003349                i686_ISR85
+                0x00003352                i686_ISR86
+                0x0000335b                i686_ISR87
+                0x00003364                i686_ISR88
+                0x0000336d                i686_ISR89
+                0x00003376                i686_ISR90
+                0x0000337f                i686_ISR91
+                0x00003388                i686_ISR92
+                0x00003391                i686_ISR93
+                0x0000339a                i686_ISR94
+                0x000033a3                i686_ISR95
+                0x000033ac                i686_ISR96
+                0x000033b5                i686_ISR97
+                0x000033be                i686_ISR98
+                0x000033c7                i686_ISR99
+                0x000033d0                i686_ISR100
+                0x000033d9                i686_ISR101
+                0x000033e2                i686_ISR102
+                0x000033eb                i686_ISR103
+                0x000033f4                i686_ISR104
+                0x000033fd                i686_ISR105
+                0x00003406                i686_ISR106
+                0x0000340f                i686_ISR107
+                0x00003418                i686_ISR108
+                0x00003421                i686_ISR109
+                0x0000342a                i686_ISR110
+                0x00003433                i686_ISR111
+                0x0000343c                i686_ISR112
+                0x00003445                i686_ISR113
+                0x0000344e                i686_ISR114
+                0x00003457                i686_ISR115
+                0x00003460                i686_ISR116
+                0x00003469                i686_ISR117
+                0x00003472                i686_ISR118
+                0x0000347b                i686_ISR119
+                0x00003484                i686_ISR120
+                0x0000348d                i686_ISR121
+                0x00003496                i686_ISR122
+                0x0000349f                i686_ISR123
+                0x000034a8                i686_ISR124
+                0x000034b1                i686_ISR125
+                0x000034ba                i686_ISR126
+                0x000034c3                i686_ISR127
+                0x000034cc                i686_ISR128
+                0x000034d8                i686_ISR129
+                0x000034e4                i686_ISR130
+                0x000034f0                i686_ISR131
+                0x000034fc                i686_ISR132
+                0x00003508                i686_ISR133
+                0x00003514                i686_ISR134
+                0x00003520                i686_ISR135
+                0x0000352c                i686_ISR136
+                0x00003538                i686_ISR137
+                0x00003544                i686_ISR138
+                0x00003550                i686_ISR139
+                0x0000355c                i686_ISR140
+                0x00003568                i686_ISR141
+                0x00003574                i686_ISR142
+                0x00003580                i686_ISR143
+                0x0000358c                i686_ISR144
+                0x00003598                i686_ISR145
+                0x000035a4                i686_ISR146
+                0x000035b0                i686_ISR147
+                0x000035bc                i686_ISR148
+                0x000035c8                i686_ISR149
+                0x000035d4                i686_ISR150
+                0x000035e0                i686_ISR151
+                0x000035ec                i686_ISR152
+                0x000035f8                i686_ISR153
+                0x00003604                i686_ISR154
+                0x00003610                i686_ISR155
+                0x0000361c                i686_ISR156
+                0x00003628                i686_ISR157
+                0x00003634                i686_ISR158
+                0x00003640                i686_ISR159
+                0x0000364c                i686_ISR160
+                0x00003658                i686_ISR161
+                0x00003664                i686_ISR162
+                0x00003670                i686_ISR163
+                0x0000367c                i686_ISR164
+                0x00003688                i686_ISR165
+                0x00003694                i686_ISR166
+                0x000036a0                i686_ISR167
+                0x000036ac                i686_ISR168
+                0x000036b8                i686_ISR169
+                0x000036c4                i686_ISR170
+                0x000036d0                i686_ISR171
+                0x000036dc                i686_ISR172
+                0x000036e8                i686_ISR173
+                0x000036f4                i686_ISR174
+                0x00003700                i686_ISR175
+                0x0000370c                i686_ISR176
+                0x00003718                i686_ISR177
+                0x00003724                i686_ISR178
+                0x00003730                i686_ISR179
+                0x0000373c                i686_ISR180
+                0x00003748                i686_ISR181
+                0x00003754                i686_ISR182
+                0x00003760                i686_ISR183
+                0x0000376c                i686_ISR184
+                0x00003778                i686_ISR185
+                0x00003784                i686_ISR186
+                0x00003790                i686_ISR187
+                0x0000379c                i686_ISR188
+                0x000037a8                i686_ISR189
+                0x000037b4                i686_ISR190
+                0x000037c0                i686_ISR191
+                0x000037cc                i686_ISR192
+                0x000037d8                i686_ISR193
+                0x000037e4                i686_ISR194
+                0x000037f0                i686_ISR195
+                0x000037fc                i686_ISR196
+                0x00003808                i686_ISR197
+                0x00003814                i686_ISR198
+                0x00003820                i686_ISR199
+                0x0000382c                i686_ISR200
+                0x00003838                i686_ISR201
+                0x00003844                i686_ISR202
+                0x00003850                i686_ISR203
+                0x0000385c                i686_ISR204
+                0x00003868                i686_ISR205
+                0x00003874                i686_ISR206
+                0x00003880                i686_ISR207
+                0x0000388c                i686_ISR208
+                0x00003898                i686_ISR209
+                0x000038a4                i686_ISR210
+                0x000038b0                i686_ISR211
+                0x000038bc                i686_ISR212
+                0x000038c8                i686_ISR213
+                0x000038d4                i686_ISR214
+                0x000038e0                i686_ISR215
+                0x000038ec                i686_ISR216
+                0x000038f8                i686_ISR217
+                0x00003904                i686_ISR218
+                0x00003910                i686_ISR219
+                0x0000391c                i686_ISR220
+                0x00003928                i686_ISR221
+                0x00003934                i686_ISR222
+                0x00003940                i686_ISR223
+                0x0000394c                i686_ISR224
+                0x00003958                i686_ISR225
+                0x00003964                i686_ISR226
+                0x00003970                i686_ISR227
+                0x0000397c                i686_ISR228
+                0x00003988                i686_ISR229
+                0x00003994                i686_ISR230
+                0x000039a0                i686_ISR231
+                0x000039ac                i686_ISR232
+                0x000039b8                i686_ISR233
+                0x000039c4                i686_ISR234
+                0x000039d0                i686_ISR235
+                0x000039dc                i686_ISR236
+                0x000039e8                i686_ISR237
+                0x000039f4                i686_ISR238
+                0x00003a00                i686_ISR239
+                0x00003a0c                i686_ISR240
+                0x00003a18                i686_ISR241
+                0x00003a21                i686_ISR242
+                0x00003a2a                i686_ISR243
+                0x00003a33                i686_ISR244
+                0x00003a3c                i686_ISR245
+                0x00003a45                i686_ISR246
+                0x00003a4e                i686_ISR247
+                0x00003a57                i686_ISR248
+                0x00003a60                i686_ISR249
+                0x00003a69                i686_ISR250
+                0x00003a72                i686_ISR251
+                0x00003a7b                i686_ISR252
+                0x00003a84                i686_ISR253
+                0x00003a8d                i686_ISR254
+                0x00003a96                i686_ISR255
+                0x00003ad3                isrTest
+ *fill*         0x00003ad6        0xa 
+ .text          0x00003ae0       0x80 build/kmc/i686/math.o
+                0x00003ae0                LeftRoll8
+                0x00003af5                LeftRoll16
+                0x00003b0b                LeftRoll32
+                0x00003b20                RightRoll8
+                0x00003b35                RightRoll16
+                0x00003b4b                RightRoll32
+ .text          0x00003b60       0x42 build/kmc/i686/string.o
+                0x00003b60                countStructuresInMemorySpace
+                0x00003b80                extractByte
+
+.data           0x00003bc0      0x266
+                0x00003bc0                        __data_start = .
+ *(.data)
+ .data          0x00003bc0        0x4 build/kmc/setup.o
+                0x00003bc0                kernelAddr
+ .data          0x00003bc4        0x0 build/kmc/string.o
+ .data          0x00003bc4        0x8 build/kmc/stdio.o
+                0x00003bc4                decimalNumbers
+                0x00003bc8                hexNumbers
+ .data          0x00003bcc        0x0 build/kmc/simplealloc.o
+ .data          0x00003bcc        0x0 build/kmc/PCI.o
+ *fill*         0x00003bcc       0x14 
+ .data          0x00003be0       0xcc build/kmc/PCIDef.o
+                0x00003be0                HD0
+                0x00003c20                HD1
+                0x00003c60                HD2
+                0x00003c94                headers
+ *fill*         0x00003cac       0x14 
+ .data          0x00003cc0      0x160 build/kmc/PCIStructs.o
+                0x00003cc0                PCIUnclassified
+                0x00003cc4                PCIMassStorage
+                0x00003cd0                PCINetworkController
+                0x00003cdc                PCIDisplayController
+                0x00003ce0                PCIMultiMediaController
+                0x00003ce6                PCIMemoryController
+                0x00003cec                PCIBridge
+                0x00003cf8                PCICommunicationController
+                0x00003d00                PCIBSP
+                0x00003d08                PCIInputDeviceController
+                0x00003d0e                PCIDockingStation
+                0x00003d10                PCIProcessor
+                0x00003d1c                PCISerialBusController
+                0x00003d28                PCIWirelessController
+                0x00003d30                PCISatelliteCommunicationController
+                0x00003d34                PCIEncryptionController
+                0x00003d38                PCISignalProcessingController
+                0x00003d3d                ProcessingAccelerator
+                0x00003d3e                NON_ESSISTANIAL_INSTRUMENT
+                0x00003d3f                _0x3F
+                0x00003d40                CoProcessor
+                0x00003d41                _0xFE
+                0x00003d42                UnassignedClassVender
+                0x00003d60                ClassDescriptors
+ .data          0x00003e20        0x0 build/kmc/math.o
+ .data          0x00003e20        0x6 build/kmc/IDT.o
+                0x00003e20                g_IDTDesc
+ .data          0x00003e26        0x0 build/kmc/HAL.o
+ .data          0x00003e26        0x0 build/kmc/isrs.o
+ .data          0x00003e26        0x0 build/kmc/ISR.o
+ .data          0x00003e26        0x0 build/kmc/PIC.o
+ .data          0x00003e26        0x0 build/kmc/IRQ.o
+
+.rodata         0x00003e28      0x131
+                0x00003e28                        __rodata_start = .
+ *(.rodata)
+ .rodata        0x00003e28       0x1c build/kmc/setup.o
+ .rodata        0x00003e44       0x80 build/kmc/stdio.o
+ .rodata        0x00003ec4       0x23 build/kmc/PCI.o
+ .rodata        0x00003ee7        0x1 build/kmc/PCIStructs.o
+                0x00003ee7                PCIClassSize
+ .rodata        0x00003ee8       0x5a build/kmc/ISR.o
+ .rodata        0x00003f42       0x17 build/kmc/IRQ.o
+
+text            0x00003f59        0x5
+ text           0x00003f59        0x5 build/boot/ksetjmp.o
+
+.bss            0x00003f60      0xe20
+                0x00003f60                        __bss_start = .
+ *(.bss)
+ .bss           0x00003f60        0x4 build/kmc/setup.o
+ .bss           0x00003f64        0x0 build/kmc/string.o
+ .bss           0x00003f64        0x0 build/kmc/stdio.o
+ .bss           0x00003f64        0x0 build/kmc/simplealloc.o
+ .bss           0x00003f64        0x0 build/kmc/PCI.o
+ .bss           0x00003f64        0x0 build/kmc/PCIDef.o
+ *fill*         0x00003f64       0x1c 
+ .bss           0x00003f80      0x190 build/kmc/PCIStructs.o
+                0x00003f80                PCIIntelligentController
+                0x00003fa0                pciClasses
+ .bss           0x00004110        0x0 build/kmc/math.o
+ *fill*         0x00004110       0x10 
+ .bss           0x00004120      0x800 build/kmc/IDT.o
+                0x00004120                g_IDT
+ .bss           0x00004920        0x0 build/kmc/HAL.o
+ .bss           0x00004920        0x0 build/kmc/isrs.o
+ .bss           0x00004920      0x400 build/kmc/ISR.o
+ .bss           0x00004d20        0xc build/kmc/PIC.o
+                0x00004d20                PIC_ICW1
+                0x00004d24                PIC_ICW4
+                0x00004d28                PIC_CMD
+ *fill*         0x00004d2c       0x14 
+ .bss           0x00004d40       0x40 build/kmc/IRQ.o
+                0x00004d40                IRQHandlers
+                0x00004d80                        __end = .
+OUTPUT(build/OSp1.bin binary)
+
+.comment        0x00000000      0x10a
+ .comment       0x00000000       0x13 build/kmc/setup.o
+ .comment       0x00000013       0x13 build/kmc/string.o
+ .comment       0x00000026       0x13 build/kmc/stdio.o
+ .comment       0x00000039       0x13 build/kmc/simplealloc.o
+ .comment       0x0000004c       0x13 build/kmc/PCI.o
+ .comment       0x0000005f       0x13 build/kmc/PCIDef.o
+ .comment       0x00000072       0x13 build/kmc/PCIStructs.o
+ .comment       0x00000085       0x13 build/kmc/math.o
+ .comment       0x00000098       0x13 build/kmc/IDT.o
+ .comment       0x000000ab       0x13 build/kmc/HAL.o
+ .comment       0x000000be       0x13 build/kmc/isrs.o
+ .comment       0x000000d1       0x13 build/kmc/ISR.o
+ .comment       0x000000e4       0x13 build/kmc/PIC.o
+ .comment       0x000000f7       0x13 build/kmc/IRQ.o

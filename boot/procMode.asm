@@ -156,5 +156,5 @@ idSpec:db "Entered Stage : Booting (32 bit)",0
 osSpecLine0:db "OS : Bos (Basic Operating System)",0
 osSpecLine1:db "    (c)Mc Player : theMW",0
 osSpecLine2:db "    https://de.namemc.com/profile/theMW.2",0
-osSpecLine3:db "    https://github.com/TheMegaForge",0
+osSpecLine3:db "    https://github.com/TheMegaForge/BasicOS",0
 times 4096-($-$$) db 0 

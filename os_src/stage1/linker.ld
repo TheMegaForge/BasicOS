@@ -12,10 +12,13 @@ INPUT
     build/kmc/math.o
     build/kmc/IDT.o
     build/kmc/HAL.o
+    build/kmc/isrs.o
     build/kmc/int/PCI.o
     build/kmc/int/binary.o
     build/kmc/int/stdio.o
     build/kmc/ISR.o
+    build/kmc/PIC.o
+    build/kmc/IRQ.o
     build/kmc/i686/IDT.o
     build/kmc/i686/io.o
     build/kmc/i686/ISR.o
