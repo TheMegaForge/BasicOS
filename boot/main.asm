@@ -205,7 +205,7 @@ main:
     ;1 = boot
     ;2 = AR
     ;2-10 = procMode
-    mov al,32            ;setup: 16sects = 8192,32sects = 16384,64sects = 32768
+    mov al,42            ;setup: 16sects = 8192,32sects = 16384,64sects = 32768
     mov cl,11               
     push 0x00000500
     call readDiskBasic  
@@ -221,7 +221,6 @@ main:
     mov cr0,eax
     jmp dword 0x8:0x7f00
 ;[bits 32]
-;TODO: READ PROTECTED MODE FROM DISC
 ;.pmode:
 ;    mov ax,0x10
 ;    mov ds,ax
