@@ -2,3 +2,4 @@ dsk.img
 .vscode/
 **/build/**
 mapfile.txt
+bx_enh_dbg.ini
