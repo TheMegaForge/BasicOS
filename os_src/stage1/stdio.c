@@ -13,6 +13,9 @@ __cdecl char* putc(char* memory,char c,uint8_t cc){
 __cdecl uint8_t puts(char** sl,char* str,enum _ColorCode cc){
     char* sll = *sl;
     int count = 0;
+    if(*sll == '\0'){
+        return 0xFFFF;
+    }
     while(*str != '\0'){
         sll = putc(sll,*str,cc);
         str++;
@@ -51,12 +54,11 @@ __cdecl char*  lineToTextAddress(int line){
 }
 
 __cdecl void kpanic(const char* data){
-    char* textBuffer = (char*)TEXT_BUFFER+(CHARS_PER_LINE*2);
-    setScreenColor(CC_RAW_RED);
-    onLine(0,"[PANIC!]",CC_WHITE_RED);
-    newLine(&textBuffer,puts(&textBuffer,(char*)data,CC_WHITE_RED),CC_RAW_RED);
-    asm("cli");
-    asm("hlt");
+    char* tb = TEXT_BUFFER;
+    int w = puts(&tb,"[PANIC] (SYSTEM STOP!)",CC_WHITE_RED);
+    newLine(&tb,w,CC_WHITE_RED);
+    puts(&tb,data,CC_WHITE_RED);
+    asm("cli;hlt");
 }
 
 __cdecl void setScreenColor(enum _ColorCode cc){
@@ -171,7 +173,26 @@ char* parsePrint(char* tb,char** str,enum _ColorCode cc,int** argp,int* written)
         };break;
         case 'x':{
             goto ptr;
-        }
+        };break;
+        case 'b':{
+            _str++;
+            if(*_str == 'b'){
+                uint32_t val = (uint32_t)**argp;
+                char* tbSnap = tb;
+                if(val == 0){
+                    puts(&tb,"false",CC_WHITE_BLUE);
+                }else{
+                    puts(&tb,"true",CC_WHITE_BLUE);
+                }
+                int* _argp = *argp;
+                _argp++;
+                *argp = _argp;
+                *written = (tb-tbSnap)/2;
+                _str++;
+            }else{
+                *written = 0;
+            }
+        };break;
     }
     *str = _str;
     return tb;
@@ -181,8 +202,15 @@ int printf(char* textBuffer,char* str,enum _ColorCode cc,...){
     int written = 0;
     int* argp = (int*)&cc;
     argp++;
+    if(*str == '\0'){
+        return 0xFFFF;
+    }
     while(*str != '\0'){
-        if(*str != '%' && *str != '\0'){
+        if(*str == '\t'){
+            tb+=10;
+            str++;
+            written+=10;
+        }else if(*str != '%' && *str != '\0'){
             tb = putc(tb,*str,cc);
             str++;
             written++;

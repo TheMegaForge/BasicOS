@@ -23,6 +23,12 @@ DECOMPRESSED __attribute__((packed)) struct PCIBarIO{
     bool reserved;
     bool always1;
 };
+typedef struct {
+    uint8_t bus;
+    uint8_t slot;
+    uint8_t func;
+    uint32_t ht;
+}__attribute__((packed)) _PCIDeviceDescriptor;
 //When you want to retrieve the actual base address of a BAR, be sure to mask the lower bits. For 16-bit Memory Space BARs, you calculate (BAR[x] & 0xFFF0). For 32-bit Memory Space BARs, you calculate (BAR[x] & 0xFFFFFFF0). 
 //For 64-bit Memory Space BARs, you calculate ((BAR[x] & 0xFFFFFFF0) + ((BAR[x + 1] & 0xFFFFFFFF) << 32)) For I/O Space BARs, you calculate (BAR[x] & 0xFFFFFFFC).
 //Before attempting to read the information about the BAR, make sure to disable both I/O and memory decode in the command byte. You can restore the original value after completing the BAR info read. 

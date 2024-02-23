@@ -5,15 +5,17 @@
 #include "../include/memdefs.h"
 #include "../include/stdio.h"
 #include "../include/string.h"
-void assignPCIDeviceHeader(_PCIDevice* device,uint32_t ClassProgIF){
-    uint16_t Class          = extractWordFromDWord(ClassProgIF,true);
-    uint16_t ProgIfRevision = extractWordFromDWord(ClassProgIF,false);
-    uint8_t ProgIF          = extractByteFromWord(ProgIfRevision,true);
-    uint8_t class = extractByteFromWord(Class,true);
-    uint8_t Subclass = extractByteFromWord(Class,false);
-    device->class = pciClasses[class];
-    device->class.desc.subClassID = Subclass;
-    device->class.progIfDescriptor = ProgIF;
+extern char** getTB();
+void assignPCIDeviceHeader(_PCIDevice* device,uint32_t ClassProgIF,uint32_t DeviceVendorID){
+    uint16_t Class                  = extractWordFromDWord(ClassProgIF,true);
+    uint16_t ProgIfRevision         = extractWordFromDWord(ClassProgIF,false);
+    device->class.progIfDescriptor  = extractByteFromWord(ProgIfRevision,true);
+    device->DeviceID                = extractWordFromDWord(DeviceVendorID,true);
+    device->vendorID                = extractWordFromDWord(DeviceVendorID,false);
+    uint8_t class                   = extractByteFromWord(Class,true);
+    uint8_t Subclass                = extractByteFromWord(Class,false);
+    device->class                   = pciClasses[class];
+    device->class.desc.subClassID   = Subclass;
 }
 
 typedef struct {
@@ -41,27 +43,29 @@ uint32_t pciConfigReadDWord(uint8_t bus, uint8_t slot, uint8_t func, uint8_t off
 uint16_t pciConfigReadWord(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset){
     return (uint16_t)(pciConfigReadDWord(bus,slot,func,offset) >> ((offset & 2) * 8) & 0xFFFF);
 }
-bool readPCIDeviceInfo(PCIIterator* iterator,uint8_t func,uint32_t* statusCommand,uint32_t* ClassProgIF,uint32_t* Bist_HT_Latency_CacheLineSize){
+bool readPCIDeviceInfo(PCIIterator* iterator,uint8_t func,uint32_t* statusCommand,uint32_t* ClassProgIF,uint32_t* Bist_HT_Latency_CacheLineSize,uint32_t* DeviceVendorID){
     uint32_t verif = pciConfigReadDWord(iterator->bus,iterator->slot,func,0);
     *statusCommand = pciConfigReadDWord(iterator->bus,iterator->slot,func,4);
     *ClassProgIF = pciConfigReadDWord(iterator->bus,iterator->slot,func,8);
     *Bist_HT_Latency_CacheLineSize = pciConfigReadDWord(iterator->bus,iterator->slot,func,0xC);
+    *DeviceVendorID = verif;
     return verif != 0xFFFFFFFF;
 }
 uint8_t readPCIDeviceFunctions(PCIIterator* iterator){
     uint8_t devices = 0;
     for(uint8_t i=0;i<8;i++){
+        uint32_t DeviceVendorID = 0;
         uint32_t statusCommand = 0;
         uint32_t ClassProgIF = 0;
         uint32_t BistHTLatency_CacheLineSize = 0;
-        if(readPCIDeviceInfo(iterator,i,&statusCommand,&ClassProgIF,&BistHTLatency_CacheLineSize)){
+        if(readPCIDeviceInfo(iterator,i,&statusCommand,&ClassProgIF,&BistHTLatency_CacheLineSize,&DeviceVendorID)){
             _PCIDevice* device = &iterator->beg[iterator->current];
             device->busNum  = iterator->bus;
             device->slotNum = iterator->slot;
             device->funcNum = i;
             device->command = (statusCommand & 0x0000FFFF);
             device->status  = (statusCommand & 0xFFFF0000) >> 16;
-            assignPCIDeviceHeader(device,ClassProgIF);
+            assignPCIDeviceHeader(device,ClassProgIF,DeviceVendorID);
             iterator->current++;
             devices++;
         }else{
@@ -71,13 +75,14 @@ uint8_t readPCIDeviceFunctions(PCIIterator* iterator){
     return devices;
 }
 bool readPCIDevice(uint8_t* detectedDevices,PCIIterator* iterator,_PCIDevice** Output){
+    uint32_t DeviceVendorID = 0;
     uint32_t statusCommand = 0;
     uint32_t ClassProgIF = 0;
     uint32_t BistHTLatency_CacheLineSize = 0;
     if(Output != (void*)0xFF && *Output != (void*)0){
         kpanic("readPCIDevice : Output is nonzero!");
     }
-    if(readPCIDeviceInfo(iterator,0,&statusCommand,&ClassProgIF,&BistHTLatency_CacheLineSize)){
+    if(readPCIDeviceInfo(iterator,0,&statusCommand,&ClassProgIF,&BistHTLatency_CacheLineSize,&DeviceVendorID)){
         _PCIDevice* device = &iterator->beg[iterator->current];
         device->busNum = iterator->bus;
         device->slotNum = iterator->slot;
@@ -91,7 +96,7 @@ bool readPCIDevice(uint8_t* detectedDevices,PCIIterator* iterator,_PCIDevice** O
         if((HT >> 7) == 1){
            *detectedDevices = readPCIDeviceFunctions(iterator);
         }
-        assignPCIDeviceHeader(device,ClassProgIF);
+        assignPCIDeviceHeader(device,ClassProgIF,DeviceVendorID);
         iterator->current++;
         *Output = device;
         return true;
@@ -147,4 +152,12 @@ void readPCIBus(PCIBus* pci){
         }
     }
     return;
+}
+
+
+uint16_t readBar16(uint32_t bar){
+    return (uint16_t)(bar & 0xFFF0);
+}
+uint32_t readBar32(uint32_t bar){
+    return (uint32_t)(bar & 0xFFFFFFF0);
 }

@@ -12,7 +12,7 @@ void IRQInitialize(){
     for(int i=0;i<16;i++){
         addInterruptHandler(PIC_REMAP_OFFSET+i,IRQ_COMMON);
     }
-    enableInterrupts();
+    //enableInterrupts();
 }
 uint32_t IRQ_COMMON(Registers* regs){
     int status = 1;
@@ -25,10 +25,10 @@ uint32_t IRQ_COMMON(Registers* regs){
     }else{
         char** tb = getTB();
         char* _tb = *tb;
-        int w = printf(_tb,"UHI = %d,ISR=%d,IRR=%d",CC_WHITE_RED,irq,pic_isr,pic_irr);
+        int w = printf(_tb,"UHI = %d,ISR=%d,IRR=%d",CC_WHITE_BLUE,irq,pic_isr,pic_irr);
         _tb+=(w*2);
+        newLine(&_tb,w,CC_WHITE_BLUE);
         *tb = _tb;
-        newLine(tb,w,CC_WHITE_RED);
         status = 2;
     }
     PICSendEndOfInterrupt(irq);

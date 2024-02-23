@@ -28,7 +28,7 @@
 //0x0000000100000000 (possible memory above 4 GiB)	 ????????????????	 ???????????????? (whatever exists)	RAM -- free for use (PAE/64bit)	More Extended memory 1
 // ????????????????
 
-
+#define DRV_STRUCT_SIZE sizeof(int)*2+sizeof(void*)
 /*
     -- Possible memory --
     0x00000500	0x00007BFF(0x00007BE0) (KERNEL)
@@ -40,8 +40,7 @@
     0x7BE0 (32 Bit temporary handler value)
     0x00000500  0x00007BFF (KERNEL)
     0x00008000  0x0000F000 (OS STACK)
-    0x0000FF00  0x0000FF12 (PRINTF NUMBERS);
-
+    0x0000F000  0x0000F640 (DRIVERS)
 */
 
 

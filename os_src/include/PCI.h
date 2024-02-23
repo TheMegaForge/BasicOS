@@ -43,6 +43,8 @@ typedef struct {
     uint16_t command;
     enum PCIHeaderType ht;
     struct _PCIClass class;
+    uint16_t vendorID;
+    uint16_t DeviceID;
 }__attribute__((packed)) _PCIDevice;
 
 typedef struct {
@@ -62,3 +64,5 @@ typedef struct {
 }__attribute__((packed)) PCIBus;
 void readPCIBus(PCIBus* pci);
 bool hasPCI2Mek();
+uint16_t readBar16(uint32_t bar);
+uint32_t readBar32(uint32_t bar);
