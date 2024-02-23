@@ -1,2 +1,5 @@
-TODO : LATER ASSIGN progIF to pciDevice!
+TODO : READ ATA
+     SRC:
+		https://wiki.osdev.org/ATA_PIO_Mode
+		wiki.osdev.org/PCI_IDE_Controller
 TODO : KEYBOARD INPUT 
