@@ -1,1 +1,1 @@
-qemu-system-i386.exe -fda build/_OS.img -m 256M -drive id=disk,file=dsk.img
+qemu-system-i386.exe -fda build/_OS.img -m 512M -drive id=disk,file=dsk.img,index=0,if=ide,format=raw -device qemu-xhci -device usb-tablet,bus=usb-bus.0
