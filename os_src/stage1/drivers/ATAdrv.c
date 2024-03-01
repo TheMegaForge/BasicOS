@@ -9,7 +9,7 @@ CMNStorageError ATAread(void* extraStruct,CMNStorageClusterType ct,
                         uint16_t* buffer)
 {
     ATAAccess* access = extraStruct;
-    bool _ctCanFit = ct < 16;
+    bool _ctCanFit = ct < 17;
     return ATAdisk(access->controller,access->primary,true,(_ctCanFit * ct) + (!_ctCanFit*0xFF),readCount,lba,buffer);
 }
 
@@ -20,7 +20,7 @@ CMNStorageError ATAwrite(void* extraStruct,CMNStorageClusterType ct,
 
 {
     ATAAccess* access = extraStruct;
-    bool _ctCanFit = ct < 16;
+    bool _ctCanFit = ct < 17;
     return ATAdisk(access->controller,access->primary,false,(_ctCanFit * ct) + (!_ctCanFit*0xFF),writeCount,lba,buffer);
 }
 extern void ATAinterrupt();
