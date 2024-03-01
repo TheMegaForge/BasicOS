@@ -1,8 +1,8 @@
+port_e9_hack: enabled=1
 ata0-master: type=disk, path="C:/Users/olafm/Desktop/Bos/dsk.img", mode=flat, cylinders=4063, heads=16, spt=63
 floppya:1_44=build/_OS.img,status=inserted
 boot : floppy
 mouse: enabled=0
 display_library: win32, options="gui_debug"
-
-megs: 256
+megs: 512
 cpu: count=2, ips=10000000
