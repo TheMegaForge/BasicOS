@@ -189,6 +189,21 @@ char* parsePrint(char* tb,char** str,enum _ColorCode cc,int** argp,int* written)
                 *argp = _argp;
                 *written = (tb-tbSnap)/2;
                 _str++;
+            }else if(*_str == 'e'){
+                uint32_t val = (uint32_t)**argp;
+                char* tbSnap = tb;
+                if(val == 0){
+                    puts(&tb,"false",CC_WHITE_BLUE);
+                }else if(val == 2){
+                    puts(&tb,"half",CC_WHITE_BLUE);
+                }else{
+                    puts(&tb,"true",CC_WHITE_BLUE);
+                }
+                int* _argp = *argp;
+                _argp++;
+                *argp = _argp;
+                *written = (tb-tbSnap)/2;
+                _str++;
             }else{
                 *written = 0;
             }
