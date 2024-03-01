@@ -7,11 +7,10 @@
 void dskInt(Registers* regs){
     void** info = (void**)regs->eax;
     *(uint32_t*)info[0] = true;
-    uint32_t secs = *(uint32_t*)info[1];
-    secs--;
-    *(uint32_t*)info[1] = secs;
 }
 void sendDSKEOI(){
-    PICSendEndOfInterrupt(7);
-    PICSendEndOfInterrupt(14);
+    PICUnmask(14); // Unmask IRQ14 for ATA
+    PICUnmask(2);  // Unmask IRQ2 for the slave PIC
+    PICSendEndOfInterrupt(7);//clears interrupt flag for master PIC
+    PICSendEndOfInterrupt(14);//clears interrupt flag for slave PIC
 }
