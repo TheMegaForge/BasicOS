@@ -59,7 +59,6 @@ void setupIDEController(IDEController* c,_PCIDevice* device){
             _c->controlBase = (uint16_t)readBar16(pciConfigReadDWord(device->busNum,device->slotNum,device->funcNum,0x14));
             _c->masterIDE   = (uint16_t)readBar16(pciConfigReadDWord(device->busNum,device->slotNum,device->funcNum,0x20));
             _c->noINT       = false;
-            //TODO : READ INT;
         }
         if(caps->nativeModeMask != IDE_CHANNEL2_NATIVE){
             IDEChannel* _c  = &c->channels[1];
