@@ -53,9 +53,6 @@ void ATAidentify(IDEChannel* ata,ATAInformation* info,_CATAValidation* validatio
     
     int8_t status = readStatusRegister(ata->IObase);
     if(status == 0){
-        *statusT = 'Q';
-        statusT+=2;
-        return;
         if(*validation & ATA_VALIDATION_MASTER0 == ATA_VALIDATION_MASTER0 && isSlave){
            *validation = (*validation ^ ATA_VALIDATION_MASTER0); 
         }else{
@@ -63,6 +60,7 @@ void ATAidentify(IDEChannel* ata,ATAInformation* info,_CATAValidation* validatio
                 *validation = (*validation ^ ATA_VALIDATION_SLAVE0);
             }
         }
+        return;
     }
     while(status & 0b10000000 == 0b10000000){
         status = readStatusRegister(ata->IObase);
@@ -79,7 +77,6 @@ void ATAidentify(IDEChannel* ata,ATAInformation* info,_CATAValidation* validatio
     while(readStatusRegister(ata->IObase) & 8 != 8 );
     for(int i=0;i<257;i++){
         ident[i] = ins_(ata->IObase/*data register*/);
-        //TODO: TEST IF DRQ!! && LATER!
     }
 
     info->isHardDrive               = (bool)ident[0];
@@ -107,10 +104,6 @@ void readATAController(ATAController* ata,IDEController* ide){
             }
             ATAidentify(&ata->master0,&ata->info[0],&ata->validation,false);
             ATAidentify(&ata->slave0,&ata->info[1],&ata->validation,true);
-
-
-            //INFO: DOES WORK!
-            //TODO: DO IDENTIFCATION COMMAND (wiki.osdev.org/ATA **PIO MODE**)
         }
     }else{
         kpanic("[ATA]:Driver Allready exits!");
@@ -121,7 +114,7 @@ void ATAinterrupt(){
     IRQRegisterHandler(14,dskInt);
     IRQRegisterHandler(15,dskInt);
 }
-void diskCommon(IDEChannel* disk,bool primary,uint32_t lba,uint16_t sectorNumber,ATAInformation* info){
+void diskCommon(IDEChannel* disk,bool primary,uint32_t lba,ATAInformation* info){
     uint8_t pb = 0;
     if(primary){
         pb = 0xE0;
@@ -130,25 +123,23 @@ void diskCommon(IDEChannel* disk,bool primary,uint32_t lba,uint16_t sectorNumber
     }
     writeIORegisterByte(disk->IObase,6,pb|((lba>>24) & 0x0F));
     writeIORegisterByte(disk->IObase,1,0);
-    writeIORegisterByte(disk->IObase,2,(uint8_t)sectorNumber);
+    writeIORegisterByte(disk->IObase,2,1);
     writeIORegisterByte(disk->IObase,3,(uint8_t)lba);
     writeIORegisterByte(disk->IObase,4,(uint8_t)(lba >> 8));
     writeIORegisterByte(disk->IObase,5,(uint8_t)(lba >> 16));
 };
 #include "../../include/i686/io.h"
-extern __attribute__((cdecl)) void movEAX(uint32_t data);
 extern __attribute__((cdecl)) void dskRead(void** intInfo);
 void readContent(void** contentInfo){
-    uint16_t* buffer = (uint16_t*)contentInfo[2];
-    uint16_t base    = *(uint16_t*)contentInfo[3];
+    uint16_t* buffer = (uint16_t*)contentInfo[1];
+    uint16_t base    = *(uint16_t*)contentInfo[2];
     for(int i=0;i<257;i++){
         uint16_t value = ins_(base);
-        for(int j=0;j<14;j++)
-            io_wait();
         *buffer = value;
         buffer++;
     }
 }
+
 CMNStorageError ATAdisk(ATAController* controller,bool primary,bool read,uint32_t SecPerClu,uint32_t clusters,uint32_t lba,uint16_t* buffer){
     uint32_t secs = SecPerClu*clusters;
     char** tb = getTB();
@@ -171,16 +162,23 @@ CMNStorageError ATAdisk(ATAController* controller,bool primary,bool read,uint32_
         channel = &controller->slave0;
         info = &controller->info[1];
     }
-    diskCommon(channel,primary,lba,secs,info);
-    uint32_t isReady = false;
-    int w = printf(_tb,"is Ready=%x,secs=%x,buffer=%x,iobase=%x",CC_WHITE_BLUE,&isReady,&secs,buffer,&channel->IObase);
-    _tb+=(w*2);
-    *tb = _tb;
-    uint32_t CSecs = secs;
-    void* intInfo[] = {&isReady,&CSecs,buffer,&channel->IObase};
-    if(read){
-        writeCommandRegister(channel->IObase,0x20);//READ_CMD
-        dskRead(&intInfo);
+    int i = 0;
+    while(secs > 0){
+        if(primary){
+            diskCommon(channel,true,lba+i,info);
+        }else{
+            diskCommon(channel,false,lba+i,info);
+        }
+        uint32_t isReady = false;
+        void* info[] = {&isReady,buffer,&channel->IObase};
+        writeCommandRegister(channel->IObase,0x20);
+        dskRead(&info[0]);
+        for(int i=0;i<10;i++){
+            io_wait();
+        }
+        buffer+=256;
+        i++;
+        secs--;
     }
     return CSE_SUCCESS;
 }
