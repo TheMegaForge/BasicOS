@@ -27,7 +27,6 @@ __attribute__((packed)) struct PCIHeader{
     uint8_t offset;
     uint8_t attachment;
 };
-//TODO : ADD STATUS & COMMAND REGISTER INFORMATION AS STRUCT AND DOCUMENT IT!
 __attribute__((packed)) struct PCIHeaderDescriptor{
     uint8_t count;
     struct PCIHeader* headers;
