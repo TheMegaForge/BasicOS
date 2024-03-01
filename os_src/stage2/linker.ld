@@ -1,13 +1,15 @@
 OUTPUT_FORMAT(binary)
-ENTRY(__pre__)
+ENTRY(_pstart)
 INPUT
 (
-    build/kmc/__main.o
+    build/kmc/__86.o
+    build/kmc/ps2.o
+    build/kmc/bits.o
 )
 OUTPUT(build/OSp2.bin)
+STARTUP(build/kmc/__main.o)
 SECTIONS{
     . = 0x00100000;
-    .setup              : { __setup_start = .;              *(.setup)   }
     .text               : { __text_start = .;               *(.text)    }
     .data               : { __data_start = .;               *(.data)    }
     .rodata             : { __rodata_start = .;             *(.rodata)  }
