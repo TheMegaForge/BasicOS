@@ -47,39 +47,45 @@ getDriverINT:
 
     ret
 
-
+dskPrope:
+    push edx
+    push eax
+    mov dx,0x1f7
+    in al,dx
+    push eax
+    mov dx,0x1f1
+    in al,dx
+    pop eax
+    pop eax
+    pop edx
+    ret
 [extern readContent]
 [extern sendDSKEOI]
 global dskRead
 dskRead:
     push ebp
     mov ebp,esp
-
-    xor eax,eax
-    xor edx,edx
-    xor ecx,ecx
-    xor edi,edi
-
-    mov ecx,[ebp+8];intInfo
-    mov edx,[ecx]  ;isReady
-    mov edi,[ecx+4];secs
-
-.cmpLoop:
-    mov ecx,[edi]
-    cmp ecx,0
-    jz .End
-    cmp [edx],dword 1
-    je .ready
+    push ecx
+    push eax
+    push edx
+.loop:
     mov eax,[ebp+8];info
-    jmp .readyEnd
+    mov edx,[eax];ptr
+    mov ecx,[edx]
+    cmp ecx,0
+    je .loop
     .ready:
+        cli
+        mov eax,[ebp+8]
         push eax
         call readContent
+        pop eax
         call sendDSKEOI
-        mov [edi],dword 0
+        sti
     .readyEnd:
-    jmp .cmpLoop
-    .End:
+    pop edx
+    pop  eax
+    pop  ecx
     mov esp,ebp
     pop ebp
     ret
