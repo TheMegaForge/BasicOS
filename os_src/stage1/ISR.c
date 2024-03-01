@@ -16,9 +16,7 @@ unsigned int __attribute__((cdecl)) ISR_HANDLE(Registers* regs){
         return 0;
     }else{
         char** tb = getTB();
-        int w = printf(*tb,"INTERRUPT = %d",CC_WHITE_RED,regs->interrupt);
-        newLine(tb,w,CC_WHITE_RED);
-        puts(tb,"UNHANDLED EXCEPTION!",CC_WHITE_RED);
+        printf(tb,"UNHANDLED EXCEPTION! %d",CC_WHITE_RED,regs->interrupt);
         asm("cli");
         asm("hlt");
     }
