@@ -44,3 +44,29 @@ probeIfRight:
     mov esp,ebp
     pop ebp
     ret
+
+
+;extern char* _drvGetTb(KBDDriver* drv);
+global _drvGetTb
+_drvGetTb:
+    mov eax,[esp+4]
+    ret
+
+;extern void _drvIncOrResetInc(const int* ci);
+global _drvIncOrResetInc
+_drvIncOrResetInc:
+    push ebp 
+    mov ebp,esp
+    mov eax,[ebp+8]
+    cmp [eax],byte 19
+    jl .Increment
+    jmp .Shrink
+    .Increment:
+        inc byte [eax]
+        jmp .ShrinkEnd
+    .Shrink:
+        mov byte [eax],0
+    .ShrinkEnd:
+    mov esp,ebp
+    pop ebp
+    ret
