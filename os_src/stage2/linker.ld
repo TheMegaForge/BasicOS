@@ -3,6 +3,8 @@ ENTRY(_pstart)
 INPUT
 (
     build/kmc/__86.o
+    build/kmc/kbd.o
+    build/kmc/__kbd.o
     build/kmc/ps2.o
     build/kmc/bits.o
 )
