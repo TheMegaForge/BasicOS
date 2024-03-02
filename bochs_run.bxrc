@@ -1,7 +1,8 @@
-
-ata0-master: type=disk, path="C:/Users/olafm/Desktop/Bos/dsk.img", mode=flat, cylinders=4063, heads=16, spt=63
+port_e9_hack: enabled=1
+ata0-master: type=disk, path="C:/Users/olafm/Desktop/Bos/dsk.img", mode=flat, cylinders=4063, heads=16, spt=63, translation=none,status=inserted
 floppya:1_44=build/_OS.img,status=inserted
 boot : floppy
-mouse: enabled=0
+mouse: enabled=1
+
 megs: 256
 cpu: count=2, ips=10000000
