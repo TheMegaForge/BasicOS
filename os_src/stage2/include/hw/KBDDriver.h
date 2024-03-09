@@ -4,14 +4,16 @@
 //typedef void(*KBDPlug)(StageHandles* sh);
 typedef int8_t char8_t;
 typedef struct{
-    const char tb[20];
-    char(*await)(StageHandles* sh);
-    char(*get)(StageHandles* sh);
-    //int(*installListener)(StageHandles* sh,KBDPlug* plug);
-    void(*fgets)(StageHandles* sh,char* location,uint8_t length);
-    const uint8_t status;//read only
-    const uint8_t tb_inc;
+    uint8_t rep[100];
+    uint8_t buf[100];
+    bool held;
+    bool output;
+    uint8_t curr;
+    uint8_t lread;
+    uint8_t read;
+    bool active;
 }KBDDriver;
-char8_t await(StageHandles* sh);
-char8_t get(StageHandles* sh);
+char await(StageHandles* sh);
 void fgets(StageHandles* sh,char* location,uint8_t length);
+void fgets_tui(StageHandles* sh,char* location,uint8_t  length,char** tb,enum _ColorCode cc);
+void fgets_opi(StageHandles* sh,char* location,uint8_t* cnt,char** tb,enum _ColorCode cc); // waits until enter key is pressed
