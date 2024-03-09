@@ -23,8 +23,6 @@ void prepareKeyboard(StageHandles* sh,PS2Device* ps2,Keyboard* kbd){
         tmp = sh;
         writeIO_(sh,KBD_DATA_PORT,0xEE);
         uint8_t _r = readIO_(sh,KBD_DATA_PORT);
-        int w = sh->printf(sh->_tb,"_r=%x,",CC_WHITE_BLUE,_r);
-        sh->_tb+=(w*2);
         kbd2(sh,0xF0,1);
         _r = readIO_(sh,KBD_DATA_PORT);
         if(_r != 0xFA){
@@ -38,6 +36,12 @@ void prepareKeyboard(StageHandles* sh,PS2Device* ps2,Keyboard* kbd){
 extern StageHandles* getHandles();
 
 void createDriver(KBDDriver* drv,Keyboard* kbd,StageHandles* sh){
+    for(int i=0;i<100;i++){
+        drv->buf[i] = 0xFF;
+        drv->rep[i] = 0;
+    }
+    drv->curr = 0;
+    drv->held = true;
     if(sh->regDriverINT(PS2_DRV_ID,KBD_DRV_SUB_ID,drv) == CDRV_SUCCESS){
     }else{
         *TEXT_BUFFER = '?';
