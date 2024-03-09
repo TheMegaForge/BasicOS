@@ -46,10 +46,16 @@ probeIfRight:
     ret
 
 
-;extern char* _drvGetTb(KBDDriver* drv);
+;extern char* _drvGetTb(const char* drv);
 global _drvGetTb
 _drvGetTb:
-    mov eax,[esp+4]
+    push ebp;4
+    mov ebp,esp
+
+    mov eax,[ebp+8]
+    
+    mov esp,ebp
+    pop ebp
     ret
 
 ;extern void _drvIncOrResetInc(const int* ci);
@@ -57,7 +63,7 @@ global _drvIncOrResetInc
 _drvIncOrResetInc:
     push ebp 
     mov ebp,esp
-    mov eax,[ebp+8]
+    mov eax,[ebp+8];ci
     cmp [eax],byte 19
     jl .Increment
     jmp .Shrink
@@ -69,4 +75,9 @@ _drvIncOrResetInc:
     .ShrinkEnd:
     mov esp,ebp
     pop ebp
+    ret
+
+
+global fgets_secure
+fgets_secure:
     ret
