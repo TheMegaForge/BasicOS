@@ -16,28 +16,9 @@ void __kbd__(Registers* regs){
     KBDDriver* kbd = getKBD();
     StageHandles* sh = _getHandles();
     uint8_t c = sh->inb_(KBD_DATA_PORT);
-    bool isRel = isRelease(c);
-    bool isSame = (kbd->buf[kbd->curr] == c) || kbd->buf[kbd->curr] == 0xFF;
-    kbd->held = (isRel == false);
-    //TODO: TEST!
-    if(!isRel  && kbd->curr < 100 && kbd->active == true){
-        kbd->output = true;
-        int w;
-        //handle if diffrent
-        uint8_t _buc = kbd->buf[kbd->curr];
-        uint8_t __c = kbd->curr;
-        kbd->curr += ((isSame == false));
-        kbd->buf[kbd->curr] = (((__c == kbd->curr)== false) || kbd->buf[kbd->curr] == 0xFF)*c+((__c == kbd->curr) && kbd->buf[kbd->curr] != 0xFF )*_buc;//works
-        kbd->rep[kbd->curr] +=(__c == kbd->curr);
-        kbd->rep[kbd->curr] = ((__c == kbd->curr)*kbd->rep[kbd->curr])+((__c == kbd->curr) == false);
-        //increment when not diffrent
-        kbd->read++;
-        //w = sh->printf(sh->_tb,"hld=%bb",CC_WHITE_BLUE,kbd->held);
-        //sh->_tb+=(w*2);
-        return;
+    if(kbd->active == true){
+        kbd->_char = isRelease(c)*0x7C+(isRelease(c) == false)*c;
     }
-    kbd->curr -=100*(isRel == false);
-    kbd->held = false;
 }
 char chars[] = {
     (char)0x1B,'1','2','3','4','5','6','7','8','9','0',
@@ -49,39 +30,30 @@ char chars[] = {
 char conv_c(uint8_t _c){
     return chars[_c - 1];
 }
-char await(StageHandles* sh){
+char await(){
     asm("cli");
     KBDDriver* kbd = getKBD();
-    kbd->lread = kbd->curr;
     kbd->active = true;
-    kbd->held = true;
     asm("sti");
-loop:
-    while(!kbd->output){}
-    if(kbd->held){
-        goto loop;
-    }
-    kbd->lread = kbd->curr;
-    uint8_t c = kbd->buf[kbd->lread];
-    kbd->read = 0;
-    kbd->held = false;
-    kbd->output = false;
+    while(kbd->_char == 0x7C){}
     kbd->active = false;
-    return conv_c(c);
+    uint8_t back = kbd->_char;
+    kbd->_char = 0x7C;
+    return conv_c(back);
 }
-void fgets(StageHandles* sh,char* location,uint8_t length){
+void fgets(char* location,uint8_t length){
     int inc = 0;
     for(int i = 0;i!=length;i++){
-        location[inc] = await(sh);
+        location[inc] = await();
         inc++;
     }
 }
 
-void fgets_tui(StageHandles* sh,char* location,uint8_t length,char** tb,enum _ColorCode cc){
+void fgets_tui(char* location,uint8_t length,char** tb,enum _ColorCode cc){
     char* _tb = *tb;
     int inc = 0;
     for(int i = 0;i!=length;i++){
-        char c = await(sh);
+        char c = await();
         location[inc] = c;
         *_tb = c;
         *(_tb+1) = cc;
@@ -90,18 +62,26 @@ void fgets_tui(StageHandles* sh,char* location,uint8_t length,char** tb,enum _Co
     *tb = _tb;
 }
 
-void fgets_opi(StageHandles* sh,char* location,uint8_t* cnt,char** tb,enum _ColorCode cc){
+void fgets_opi(char* location,uint8_t* cnt,char** tb,enum _ColorCode cc){
     char* _tb = *tb;
     uint8_t inc = 0;
 loop:
-    char c = await(sh);
+    char c = await();
     while(c != '\r'){
-        location[inc] = c;
-        *_tb = c;
-        *(_tb+1) = cc;
-        inc++;
-        _tb+=2;
-        goto loop;
+        if(c != 0x8){
+            location[inc] = c;
+            *_tb = c;
+            *(_tb+1) = cc;
+            inc++;
+            _tb+=2;
+            goto loop;
+        }else{
+            inc--;
+            location[inc] = '\0';
+            _tb-=2;
+            *_tb = '\0';
+            goto loop;
+        }
     }
     *tb = _tb;
     *cnt = inc;
