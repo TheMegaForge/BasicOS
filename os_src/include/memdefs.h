@@ -11,8 +11,8 @@
 
 #define TEXT_DESC_OUTPUT        0x00007E00
 #define TEXT_DESC_OUTPUT_END    0x000080FF  //~800 bytes
-#define MEM_MAP_BEGIN           TEXT_DESC_OUTPUT_END
-#define MEM_MAP_END             0x000082FF  // ~500 bytes
+#define MEM_MAP_BEGIN           0x00008240
+#define MEM_MAP_END             0x00008300  // 
 #define PCI_BUSSES_BEGIN        0x000082FF
 #define PCI_BUSSES_END          PCI_BUSSES_BEGIN+(565*13)  //565 devices
 #define MEMORY_MAX              0x00080000
