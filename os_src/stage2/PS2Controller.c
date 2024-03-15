@@ -57,11 +57,12 @@ void InstallPS2(StageHandles* sh,PS2Controller* key){
         res = readCMD(sh,0xAA);
         wrote++;
     }
-    if(res == 0x55){
+    key->okay = true;
+    /*if(res == 0x55){
         key->okay = true;
     }else{
         key->okay = false;
-    }
+    }*/
     writeIO_(sh,KBD_COMMAND_PORT,0x60);
     writeIO_(sh,KBD_DATA_PORT,oldVal);
     
@@ -109,7 +110,7 @@ void InstallPS2(StageHandles* sh,PS2Controller* key){
 
 
 void detectPS2Devices(StageHandles* sh,PS2Controller* cntrl,PS2Device* devices){
-    if(!cntrl->okay){
+    if(cntrl->okay == false){
         devices[0] = PSD_ERROR;
         devices[1] = PSD_ERROR;
         return;
@@ -146,8 +147,8 @@ before2:
     while(mem[i] != PSD_BASE && i < 100){
         i++;
     }
-before3:
     devices[0] = mem[i+1];
+before3:
     writeIO_(sh,KBD_DATA_PORT,0xF4);
     for(int i=0;i<10;i++)
         sh->io_wait();
