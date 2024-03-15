@@ -6,6 +6,7 @@ typedef struct{
     int(*printf)(char* tb,char* str,enum _ColorCode cc,...);
     uint8_t(*newLine)(char** sl,uint8_t written,enum _ColorCode cc);
     uint8_t(*puts)(char** tb,char* str,enum _ColorCode cc);
+    char*(*LineToScreenAddress)(int line);
     void(*kpanic)(const char* data);
     void(*setScreenColor)(enum _ColorCode cc);
     uint32_t(*regDriverINT)(int id,int subID,void* addr);
