@@ -12,4 +12,5 @@ typedef struct{
     uint32_t t_dsk1GIBs;
     uint32_t t_dsk1MIBs;
     uint32_t t_dsk1KIBs;
+    uint32_t t_maxLBA28;
 }StorageInfo;
