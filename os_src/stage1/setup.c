@@ -78,23 +78,34 @@ RawFunction __cdecl section(".setup")  void __setup(struct  NativeTalk* nt){
     uint32_t totalMIBS = MIB_lower+MIB_upper;
     uint32_t totalGIBS = totalMIBS/1024;
     uint32_t totalKIBS = KIB_upper+KIB_lower;
+    //TODO : FIX READ
     w = printf(_tb,"Total Storage in 1024 Format:",CC_WHITE_BLUE);
     _tb+=(w*2);
     newLine(&_tb,w,CC_WHITE_BLUE);
     w = printf(_tb,"     KIB=%d,MIB=%d,GIB~=%d,raw_lower=%d,raw_upper=%d",CC_WHITE_BLUE,totalKIBS,totalMIBS,totalGIBS,KIB_lower,KIB_upper);
     _tb+=(w*2);
     newLine(&_tb,w,CC_WHITE_BLUE);
+    uint8_t readTries = 0;
     // loads 97152 bytes 
-    if(storage.read(&access,CCT_12144,8,1,0,0,STAGE_2_LOCATION) == CSE_SUCCESS){
+read:
+    CMNStorageError se = storage.read(&access,CCT_12144,8,1,0,0,STAGE_2_LOCATION);
+    if(se == CSE_SUCCESS){
         *TEXT_BUFFER = 'G';
         addInterruptHandler(100,switch_d);
         void(*stage2)(DiskInfo*,PCIBus*,StorageInfo*,char*) = STAGE_2_LOCATION;
         DiskInfo dInfo = {&ide,&ata,&storage};
         StorageInfo si = {&totalGIBS,&totalMIBS,&totalKIBS};
+        si.t_maxLBA28 = ata.info[0].maxLBA28;
         stage2(&dInfo,&bus,&si,_tb);
+    }else if(se == CSE_READ_OVERRUN && readTries != 4){
+        readTries++;
+        goto read;
     }else{
+        w = printf(_tb,"se = %d,rt = %d",CC_WHITE_BLUE,se,readTries);
+        _tb+=(w*2);
         puts(&_tb,"CAN NOT BOOT!READING STAGE2 FAILED!",CC_WHITE_BLUE);
     }
+    puts(&_tb,"FAILED TO READ SECTOR!",CC_WHITE_BLUE);
     for(;;){}
     return;
 }
