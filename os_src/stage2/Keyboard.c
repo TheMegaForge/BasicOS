@@ -18,7 +18,7 @@ void _null(Registers* regs){
 
 }
 void prepareKeyboard(StageHandles* sh,PS2Device* ps2,Keyboard* kbd){
-    if(ps2[0] == PSD_MF_KBD || ps2[1] == PSD_MF_KBD_2){
+    if(ps2[0] == PSD_MF_KBD){
         sh->IRQRegisterHandler(1,_null);
         tmp = sh;
         writeIO_(sh,KBD_DATA_PORT,0xEE);
@@ -28,20 +28,18 @@ void prepareKeyboard(StageHandles* sh,PS2Device* ps2,Keyboard* kbd){
         if(_r != 0xFA){
             kbd->scanSet = KBD_SCAN_ERROR;
         }
+        kbd->okay = true;
     }else{
         kbd->okay = false;
         return;
     }
 }
 extern StageHandles* getHandles();
-
+extern void __kbd__(Registers* regs);
 void createDriver(KBDDriver* drv,Keyboard* kbd,StageHandles* sh){
-    for(int i=0;i<100;i++){
-        drv->buf[i] = 0xFF;
-        drv->rep[i] = 0;
-    }
-    drv->curr = 0;
-    drv->held = true;
+    drv->active = false;
+    drv->_char  = 0x7C;
+    sh->IRQRegisterHandler(1,__kbd__);
     if(sh->regDriverINT(PS2_DRV_ID,KBD_DRV_SUB_ID,drv) == CDRV_SUCCESS){
     }else{
         *TEXT_BUFFER = '?';
