@@ -7,7 +7,7 @@ start:
     mov si,idSpec
     call ax
     call getMemoryInfo
-    mov [0x7B00],ax
+    mov [0x9B00],ax
     call hasPCI
     mov esp,ebp
     pop ebp
@@ -33,7 +33,7 @@ hasPCI:
     .l2Mek:
     popa
     ret
-%define MEM_MAP_STORE_LOC 0x8000
+%define MEM_MAP_STORE_LOC 0x9500
 ;
 ; ax = list
 ;
@@ -54,10 +54,11 @@ getMemoryInfo:
         je .MEnd
         pop cx
         cmp cx,20
-        je .Expand
+        push ax
+        mov ax,0x10
+        mov ds,ax
+        pop ax
         jmp .ExpandL
-        .Expand:
-            mov [di+20],dword 0xFFFFFFFF
         .ExpandL:
             inc word [esp];increment the value of 'list'
             add di,24
@@ -69,6 +70,10 @@ getMemoryInfo:
     pop ebx
     pop ecx
     pop edx
+    push ax
+    mov ax,0
+    mov ds,ax
+    pop ax
     ret
 ;
 ;stack 1 = 0|0,1 = list end,1 = !end
