@@ -5,8 +5,10 @@ INPUT
     build/kmc/__86.o
     build/kmc/kbd.o
     build/kmc/__kbd.o
+    build/kmc/mem0.o
     build/kmc/ps2.o
     build/kmc/bits.o
+    build/kmc/str.o
 )
 OUTPUT(build/OSp2.bin)
 STARTUP(build/kmc/__main.o)
