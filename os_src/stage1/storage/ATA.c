@@ -133,7 +133,7 @@ extern __attribute__((cdecl)) void dskRead(void** intInfo);
 void readContent(void** contentInfo){
     uint16_t* buffer = (uint16_t*)contentInfo[1];
     uint16_t base    = *(uint16_t*)contentInfo[2];
-    for(int i=0;i<257;i++){
+    for(int i=0;i<256;i++){
         uint16_t value = ins_(base);
         *buffer = value;
         buffer++;
@@ -173,12 +173,19 @@ CMNStorageError ATAdisk(ATAController* controller,bool primary,bool read,uint32_
         void* info[] = {&isReady,buffer,&channel->IObase};
         writeCommandRegister(channel->IObase,0x20);
         dskRead(&info[0]);
-        for(int i=0;i<10;i++){
+        for(int i=0;i<14;i++){
             io_wait();
+        }
+        if(*(int*)0x9BB0 == 1){
+            int w = printf(_tb,"es=%d",CC_WHITE_BLUE,lba);
+            _tb+=(w*2);
+            *(int*)0x9BB0 = 0;
+            return CSE_READ_OVERRUN;
         }
         buffer+=256;
         i++;
         secs--;
     }
+    *tb = _tb;
     return CSE_SUCCESS;
 }
