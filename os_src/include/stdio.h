@@ -11,6 +11,8 @@ enum _ColorCode{
     CC_RAW_RED = 0x44,
     CC_WHITE_BLUE = 0x1F,
     CC_BLACK_BLUE = 0x01,
+    CC_BLACK_WHITE = 0x0F,
+    CC_BLACK_RED   = 0x04,
     CC_GREEN_BLUE = 0x21,
     CC_YELLOW_BLUE = 0xE1,
     CC_WHITE_RED   = 0xF4
