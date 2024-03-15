@@ -1,0 +1,116 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/kmc/__main.o
+LOAD build/kmc/__86.o
+LOAD build/kmc/kbd.o
+LOAD build/kmc/__kbd.o
+LOAD build/kmc/mem0.o
+LOAD build/kmc/ps2.o
+LOAD build/kmc/bits.o
+LOAD build/kmc/str.o
+                0x00100000                        . = 0x100000
+
+.text           0x00100000     0x163f
+                0x00100000                        __text_start = .
+ *(.text)
+ .text          0x00100000      0x7c2 build/kmc/__main.o
+                0x00100000                _pstart
+                0x00100229                enterFetch
+                0x00100393                getKBD
+                0x0010039d                pre__init
+                0x00100465                displayBoot
+                0x00100489                InitalizePS2
+                0x001005d7                InitalizeKeyboard
+                0x0010061f                _getHandles
+                0x00100629                setupHandles
+                0x00100783                irq12
+                0x00100789                key
+                0x0010078f                installPs2Handlers
+ *fill*         0x001007c2        0xe 
+ .text          0x001007d0       0x61 build/kmc/__86.o
+                0x001007d0                getHandles
+                0x001007d9                probeIfRight
+                0x0010080e                _drvGetTb
+                0x00100818                _drvIncOrResetInc
+                0x00100830                fgets_secure
+ .text          0x00100831      0x198 build/kmc/kbd.o
+                0x00100831                kbd2
+                0x001008bf                _null
+                0x001008c5                prepareKeyboard
+                0x00100967                createDriver
+ .text          0x001009c9      0x219 build/kmc/__kbd.o
+                0x001009c9                isRelease
+                0x001009de                __kbd__
+                0x00100a54                conv_c
+                0x00100a6d                await
+                0x00100ab5                fgets
+                0x00100af8                fgets_tui
+                0x00100b5d                fgets_opi
+ .text          0x00100be2      0x1ed build/kmc/mem0.o
+                0x00100be2                getNumberOfLayouts
+                0x00100bee                loadRegion
+                0x00100c5d                fetchRegions
+ .text          0x00100dcf      0x7a4 build/kmc/ps2.o
+                0x00100dcf                writeIO_
+                0x00100e32                readIO_
+                0x00100e68                readIO_Moment
+                0x00100e9d                readCMD
+                0x00100ed0                writeFirstPort
+                0x00100f0f                writeSecondPort
+                0x00100f48                InstallPS2
+                0x0010125f                detectPS2Devices
+                0x0010156d                unlockDevices
+ .text          0x00101573       0x86 build/kmc/bits.o
+                0x00101573                bitClear8
+                0x0010159f                bitClear16
+                0x001015ce                bitClear32
+ .text          0x001015f9       0x46 build/kmc/str.o
+                0x001015f9                strncmp
+
+.data           0x00101640       0x39
+                0x00101640                        __data_start = .
+ *(.data)
+ .data          0x00101640        0x0 build/kmc/__main.o
+ .data          0x00101640        0x0 build/kmc/kbd.o
+ .data          0x00101640       0x39 build/kmc/__kbd.o
+                0x00101640                chars
+ .data          0x00101679        0x0 build/kmc/mem0.o
+ .data          0x00101679        0x0 build/kmc/ps2.o
+ .data          0x00101679        0x0 build/kmc/bits.o
+ .data          0x00101679        0x0 build/kmc/str.o
+
+.rodata         0x0010167c      0x159
+                0x0010167c                        __rodata_start = .
+ *(.rodata)
+ .rodata        0x0010167c      0x134 build/kmc/__main.o
+ .rodata        0x001017b0       0x25 build/kmc/kbd.o
+
+.bss            0x001017d8       0x10
+                0x001017d8                        __bss_start = .
+ *(.bss)
+ .bss           0x001017d8        0xa build/kmc/__main.o
+                0x001017d8                index
+ *fill*         0x001017e2        0x2 
+ .bss           0x001017e4        0x4 build/kmc/kbd.o
+ .bss           0x001017e8        0x0 build/kmc/__kbd.o
+ .bss           0x001017e8        0x0 build/kmc/mem0.o
+ .bss           0x001017e8        0x0 build/kmc/ps2.o
+ .bss           0x001017e8        0x0 build/kmc/bits.o
+ .bss           0x001017e8        0x0 build/kmc/str.o
+                0x001017e8                        __end = .
+OUTPUT(build/OSp2.bin binary)
+
+.comment        0x00000000       0x85
+ .comment       0x00000000       0x13 build/kmc/__main.o
+ .comment       0x00000013       0x13 build/kmc/kbd.o
+ .comment       0x00000026       0x13 build/kmc/__kbd.o
+ .comment       0x00000039       0x13 build/kmc/mem0.o
+ .comment       0x0000004c       0x13 build/kmc/ps2.o
+ .comment       0x0000005f       0x13 build/kmc/bits.o
+ .comment       0x00000072       0x13 build/kmc/str.o
