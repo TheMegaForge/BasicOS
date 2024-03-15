@@ -12,6 +12,7 @@ typedef enum{
     CSE_INVALID_PTR         = 7,
     CSE_INVALID_READ        = 8,
     CSE_TO_TINY_SECTORS     = 9,
+    CSE_READ_OVERRUN        = 10,
     CSE_EXTRA_RETURN_MASK  = 0x8000
 }CMNStorageError;
 typedef enum{
