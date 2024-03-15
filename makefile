@@ -4,6 +4,7 @@ LD = $(TARGET)-ld
 REAL_MODE_FILE = TRM.bin
 CC_FLAGS = -c -ffreestanding -mno-red-zone -m32 -nostdlib
 LD_FLAGS_S1 = -T os_src/stage1/linker.ld
+LD_FLAGS_S2 = -T os_src/stage2/linker.ld
 FPF = fpf.bin
 
 TOOL_CHAIN = $$HOME/Toolchain
@@ -13,8 +14,9 @@ BOOT_SRC = boot
 TARGET = $(TOOL_CHAIN)/i686-elf/bin/i386-elf
 STAGE_1 = os_src/stage1
 STAGE_1_OUT = build/kmc
+STAGE_2 = os_src/stage2
 INTERNEL_OUT = build/kmc/int 
-all: mkboot mk_i686 mk_internel mk_drivers mksetup  _cat _trunc stage2_mk stage2_lnk stage2_cpy
+all: mkboot mk_i686 mk_internel mk_drivers mksetup  _cat _trunc new
 mkboot:
 	nasm $(ASM_FLAGS) $(BOOT_SRC)/main.asm -I / -o $(BUILD_BOOT)/main.o
 	nasm $(ASM_FLAGS) $(BOOT_SRC)/AR.asm -I / -o $(BUILD_BOOT)/AR.o
@@ -69,11 +71,21 @@ _trunc:
 	truncate -s 1440k build/_OS.img
 
 
-
+new: stage2_mk stage2_lnk stage2_cpy
 stage2_mk:
+	nasm -f elf $(STAGE_2)/x86/x86.asm -o $(STAGE_1_OUT)/__86.o
+
+	$(CC) $(CC_FLAGS) $(STAGE_2)/__pre.c -o $(STAGE_1_OUT)/__main.o
+	$(CC) $(CC_FLAGS) $(STAGE_2)/PS2Controller.c -o $(STAGE_1_OUT)/ps2.o
+	$(CC) $(CC_FLAGS) $(STAGE_2)/bits.c -o $(STAGE_1_OUT)/bits.o
+	$(CC) $(CC_FLAGS) $(STAGE_2)/Keyboard.c -o $(STAGE_1_OUT)/kbd.o
+	$(CC) $(CC_FLAGS) $(STAGE_2)/string.c -o $(STAGE_1_OUT)/str.o
+	$(CC) $(CC_FLAGS) $(STAGE_2)/MLL.c -o $(STAGE_1_OUT)/mem0.o
+	$(CC) $(CC_FLAGS) $(STAGE_2)/core_dep/KBDDriver.c -o $(STAGE_1_OUT)/__kbd.o
 	
 stage2_lnk:
-
+	$(LD) $(LD_FLAGS_S2) -m elf_i386 --print-map > mapfile2.txt
 stage2_cpy:
-
+	dd bs=512 if=build/OSp2.bin of=dsk.img seek=1 conv=notrunc
+	truncate -s 2000M dsk.img
 
